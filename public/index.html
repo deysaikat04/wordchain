@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Word</title>
+     <!--Import Google Icon Font-->
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+     <!--Import materialize.css-->
+     <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+     <link type="text/css" rel="stylesheet" href="css/styles.css">
+
+     <!--Let browser know website is optimized for mobile-->
+     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+     <!--JavaScript at end of body for optimized loading-->
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    
+</head>
+<body>
+    <!-- top nav -->
+  <nav class="z-depth-0">
+    <div class="nav-wrapper container">
+      <a href="/" class="brand">Word<span>Chain</span></a>
+      <span class="white-text text-darken-1">
+        <i class="material-icons sidenav-trigger" data-target="side-menu">menu</i>
+      </span>
+    </div>
+  </nav>
+
+  <!-- side nav -->
+  <ul id="side-menu" class="sidenav side-menu ">
+    <li><a class="subheader">WORDCHAIN</a></li>
+    <li>
+      <a href="" class="waves-effect">
+        <i class="material-icons">account_circle</i>
+         Users
+      </a>
+    </li>
+
+    <li><div class="divider"></div></li>
+    <li><a href="" class="waves-effect">
+      <i class="material-icons">mail_outline</i>Contact</a>
+    </li>
+
+    <li><div class="divider"></div></li>
+    <li><a href="index.html" class="waves-effect">
+      <i class="material-icons">cancel</i>Leave</a>
+    </li>
+    
+  </ul>
+
+   <!-- recipes -->
+   <!-- <div class="container grey-text text-darken-1 mt-40">       
+    
+      <div class="recipe-details">
+        <div class="center">
+          <h4>Word Chain</h4>
+        </div>        
+    </div> -->
+
+   <div class="recipes container grey-text text-darken-1 mt-40">       
+    <div class="card-panel recipe white row">
+      <div class="recipe-details">
+        <div class="center">
+          <p class="card-header">Create Room</p>
+        </div>
+
+        <div class="input-field col s12 center">
+          <div id="createRoom">
+            <form class="col s12" action="play.html" id="create-form">
+              <div class="row">
+                <div class="input-field col s12">
+                  <input placeholder="Username" id="username" name="username" type="text" class="validate" autocomplete="off" />
+                </div>
+
+                <div class="input-field col s12 roomcode-field">
+                  <input id="code" name="room" type="text" class="validate"  placeholder="Room code" aria-required="true" readonly="readonly" />
+                </div>
+
+                <div class="input-field col s12 center" id="generateBtn">
+                  <button 
+                    class="btn waves-effect waves-light btn-small" 
+                    onclick="generateRoomCode()"
+                    type="button">
+                    Generate Room Code
+                  </button>
+                </div>                  
+                
+
+                <div class="input-field col s12 center" id="submitBtn">
+                  <button 
+                    class="btn waves-effect waves-light btn-small" 
+                    type="submit">
+                    Create
+                  </button>
+                </div>   
+
+              </div>
+            </form>
+        </div>        
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="card-panel recipe white row">
+      <div class="recipe-details">
+        <div class="center">
+          <p class="card-header">Join Room</p>
+        </div>
+        <form class="col s12" action="play.html">
+            <div class="row">
+              <div class="input-field col s12">
+                <input placeholder="Username" id="username" name="username" type="text" class="validate" autocomplete="off" />
+              </div>
+
+              <div class="input-field col s12 roomcode-field">
+                <input id="code" name="room" type="number" class="validate"  placeholder="Room code: 1234" autocomplete="off" />
+              </div>
+
+              <div class="input-field col s12 center">
+                <button class="btn waves-effect waves-light btn-small" type="submit" name="action">
+                  Go
+                </button>
+              </div>
+              
+            </div>
+        </form>
+      </div>
+    </div>
+
+    </div>
+  
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>      
+</body>
+</html>

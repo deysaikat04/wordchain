@@ -1,0 +1,26 @@
+{
+  "name": "wordchain",
+  "version": "1.0.0",
+  "description": "Real time word game with node and socket.io",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "keywords": [
+    "nodejs",
+    "socket.io",
+    "chat",
+    "game"
+  ],
+  "author": "Saikat Dey",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.26.0",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
