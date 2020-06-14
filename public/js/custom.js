@@ -5,6 +5,7 @@ const socket = io();
 
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
+const userList = document.getElementById('side-menu');
 
 var currUser;
 
@@ -27,26 +28,36 @@ socket.on('roomUsers', ({ room, users }) => {
     
     // if(currUser === username) div.classList.add('message-sender');
     // div.classList.add('message');
-
-    currUser = users.filter(user => {
-        
-            // return user;
-            const li = document.createElement('li');
-            console.log(user.username);
-            
-            li.innerHTML = 
-            `
-                
-                    <a href="" class="waves-effect">
-                    <i class="material-icons">account_circle</i>
-                        ${user.username}
-                    </a>
-                
-            `;
-            document.querySelector('.user-list').appendChild(li);
-        
-    });
+    // userList.innerHTML = 
+    //     `${users.map(user => {
+    //         `   <li>                
+    //                 <a href="" class="waves-effect">
+    //                     <i class="material-icons">account_circle</i>
+    //                     ${user.username}
+    //                 </a>
+    //             </li>
+    //         `;            
+    //     }).join('')}`;
     
+    userList.innerHTML = `
+        <li><a class="subheader">WORDCHAIN</a></li> 
+        ${users.map(user => `
+            <li>                
+            <a href="" class="waves-effect">
+            <i class="material-icons">account_circle</i>
+            ${user.username}</a>
+            </li>
+        `).join('')}
+        <li><div class="divider"></div></li>
+        <li><a href="" class="waves-effect">
+        <i class="material-icons">mail_outline</i>Contact</a>
+        </li>
+
+        <li><div class="divider"></div></li>
+        <li><a href="index.html" class="waves-effect">
+        <i class="material-icons">cancel</i>Leave</a>
+        </li>
+      `;
 });
 
 chatForm.addEventListener('submit', (e) => {
