@@ -13,6 +13,16 @@ const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/u
 //set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+function ignoreFavicon(req, res, next) {
+    if (req.originalUrl === '/favicon.ico') {
+      res.status(204).json({nope: true});
+    } else {
+      next();
+    }
+  };
+
+  app.use(ignoreFavicon);
+
 const botName = 'WordChain Bot';
 //Run when client connects
 io.on('connection', (socket) => {
@@ -66,7 +76,9 @@ io.on('connection', (socket) => {
 
 });
 
-
+app.get('/', function(req, res){
+    res.redirect(path.join(__dirname, 'public'));
+ });
 
 const PORT = 3000 || process.env.PORT;
 
