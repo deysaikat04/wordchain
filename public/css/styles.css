@@ -20,7 +20,7 @@
   }
   /* layout styles */
   nav{
-    background-image: linear-gradient(-260deg, #6715ce, #2873fc);
+    background-image: linear-gradient(-260deg, #390280, #003dad);
     /* background: var(--primary); */
     /* border-bottom: 10px solid var(--secondary); */
   }
@@ -104,10 +104,16 @@
     margin-top: 30px;
   }
 
+  #chat-form button {
+    background-image: linear-gradient(-260deg, #6715ce, #2873fc);
+  }
+
   .btn, .btn:hover, .btn:active, .btn:active, .btn:focus{
-    background: var(--accent);
+    /* background: var(--accent); */
+    background-image: linear-gradient(-260deg, #6715ce, #2873fc);
     width: 50%;
-    box-shadow: 0 4px 10px 0 rgba(0,0,0,.4);
+    box-shadow: 0 4px 10px 0 rgba(145,77,253,.3);
+    border-radius: 50px;
   }
 
   .roomid {
