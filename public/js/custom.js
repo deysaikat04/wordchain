@@ -18,6 +18,8 @@ const { username, room } = Qs.parse(location.search, {
 socket.emit('joinRoom', { username, room });
 
 socket.on('message', message => {
+    console.log(message);
+    
     outputMessage(message);    
     //Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -75,21 +77,40 @@ chatForm.addEventListener('submit', (e) => {
 
 //output message to DOM
 function outputMessage(message) {
+
+    console.log(username);
+    
     const div = document.createElement('div');
     
-    // if(currUser === username) div.classList.add('message-sender');
-    div.classList.add('message');
+    if(message.username === username) {
+        div.classList.add('message');
+        div.innerHTML = 
+        `
+            <div>   
+                <p class="meta">${message.username} <span>${message.time}</span></p>
+                <p class="chat-text">
+                    ${message.text}
+                </p>
+            </div>
+        `;
 
-    div.innerHTML = 
-    `
-        <div class="text-right">
-            <p class="text">
-                ${message.text}
-            </p>
-            <p class="meta">${message.username} <span>${message.time}</span></p>
-        </div>
-    `;
+    }
+    else {
+        div.classList.add('message-sender');
+        div.innerHTML = 
+        `
+            <div>              
+                <p class="meta-sender">${message.username} <span>${message.time}</span></p>
+                <span class="chat-text-sender">
+                    ${message.text}
+                </p>
+            </div>
+        `;
+    }       
+
     document.querySelector('.chat-messages').appendChild(div);
+    var seperator = document.createElement('br');
+    document.querySelector('.chat-messages').appendChild(seperator);
 }
 
 
