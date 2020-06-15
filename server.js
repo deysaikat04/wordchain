@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
         socket.join(user.room);
 
         //welcome current user
-        socket.emit('message', formatMessage(botName, 'Welcome in WordChain'));
+        // socket.emit('message', formatMessage(botName, 'Welcome in WordChain'));
 
         //Broadcast when user conencts
         socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} has joined!`));

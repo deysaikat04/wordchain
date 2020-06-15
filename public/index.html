@@ -32,7 +32,7 @@
 
   <!-- side nav -->
   <ul id="side-menu" class="sidenav side-menu ">
-    <!-- <li><a class="subheader">WORDCHAIN</a></li>
+    <li><a class="subheader">WORDCHAIN</a></li>
     <li>
       <a href="" class="waves-effect">
         <i class="material-icons">account_circle</i>
@@ -48,11 +48,11 @@
     <li><div class="divider"></div></li>
     <li><a href="index.html" class="waves-effect">
       <i class="material-icons">cancel</i>Leave</a>
-    </li> -->
+    </li>
 
   </ul>
 
-   <!-- recipes -->
+   <!--  -->
    <!-- <div class="container grey-text text-darken-1 mt-40">       
     
       <div class="recipe-details">
@@ -68,24 +68,28 @@
           <p class="card-header">Create Room</p>
         </div>
 
-        <div class="input-field col s12 center">
+        <div class="input-field col s12 ">
           <div id="createRoom">
-            <form class="col s12" action="play.html" id="create-form">
+            <form class="col s12" action="play.html" id="create-form" >
               <div class="row">
                 <div class="input-field col s12">
-                  <input placeholder="Username" id="username" name="username" type="text" class="validate" autocomplete="off" />
+                  <input placeholder="Username" id="username" name="username" type="text" class="validate" reqiured autocomplete="off" 
+                    onkeyup="validateUsername()"/>
+                  <span class="helper-text">It will be your name for the game.</span>
                 </div>
+                <span class="error-text" id="error"></span>
 
                 <div class="input-field col s12 roomcode-field">
-                  <input id="code" name="room" type="text" class="validate"  placeholder="Room code" aria-required="true" readonly="readonly" />
+                  <input id="code" name="room" type="text" class="validate"  placeholder="Room code" aria-required="true" reqiured readonly="readonly" />
+                  <span class="helper-text">Room code will generate automatically..</span>
                 </div>
 
                 <div class="input-field col s12 center" id="generateBtn">
                   <button 
                     class="btn waves-effect waves-light btn-small" 
-                    onclick="generateRoomCode()"
+                    onclick="generateRoomCode()" 
                     type="button">
-                    Generate Room Code
+                    Generate
                   </button>
                 </div>                  
                 
@@ -93,7 +97,10 @@
                 <div class="input-field col s12 center" id="submitBtn">
                   <button 
                     class="btn waves-effect waves-light btn-small" 
-                    type="submit">
+                    id="btnCreate"
+                    type="submit"
+                    title="Hello World!"
+                    disabled>
                     Create
                   </button>
                 </div>   
@@ -114,11 +121,13 @@
         <form class="col s12" action="play.html">
             <div class="row">
               <div class="input-field col s12">
-                <input placeholder="Username" id="username" name="username" type="text" class="validate" autocomplete="off" />
+                <input placeholder="Username" id="username" name="username" type="text" class="validate" autocomplete="off" reqiured/>
+                <span class="helper-text">It will be your name for the game.</span>
               </div>
 
               <div class="input-field col s12 roomcode-field">
-                <input id="code" name="room" type="number" class="validate"  placeholder="Room code: 1234" autocomplete="off" />
+                <input id="code" name="room" type="number" class="validate"  placeholder="Room code: 1234" autocomplete="off" reqiured/>
+                <span class="helper-text">This is the room code that has aalready been created.</span>
               </div>
 
               <div class="input-field col s12 center">

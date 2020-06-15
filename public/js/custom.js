@@ -1,5 +1,9 @@
 const socket = io();
 
+
+var count = 9;
+var t;
+var timer_is_on = 0;
 // const createForm = document.getElementById('create-form');
 // // const chatMessages = document.querySelector('.chat-messages');
 
@@ -17,29 +21,16 @@ const { username, room } = Qs.parse(location.search, {
 //Join chatroom
 socket.emit('joinRoom', { username, room });
 
-socket.on('message', message => {
-    console.log(message);
-    
+socket.on('message', message => {    
     outputMessage(message);    
     //Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
 socket.on('roomUsers', ({ room, users }) => {
-    
-    
-    // if(currUser === username) div.classList.add('message-sender');
-    // div.classList.add('message');
-    // userList.innerHTML = 
-    //     `${users.map(user => {
-    //         `   <li>                
-    //                 <a href="" class="waves-effect">
-    //                     <i class="material-icons">account_circle</i>
-    //                     ${user.username}
-    //                 </a>
-    //             </li>
-    //         `;            
-    //     }).join('')}`;
+
+    console.log(users.length);
+    callTimer(users);
     
     userList.innerHTML = `
         <li><a class="subheader">WORDCHAIN</a></li> 
@@ -65,6 +56,7 @@ socket.on('roomUsers', ({ room, users }) => {
 chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
+    // stopCount();
     //get msg
     const msg = e.target.elements.msg.value;
     
@@ -72,17 +64,17 @@ chatForm.addEventListener('submit', (e) => {
     socket.emit('chatMessage', msg);
 
     e.target.elements.msg.value = '';
-    e.target.elements.msg.focus();
+    e.target.elements.msg.blur();
+    e.target.elements.msg.disabled = false;
 });
 
 //output message to DOM
 function outputMessage(message) {
-
-    console.log(username);
     
     const div = document.createElement('div');
     
     if(message.username === username) {
+
         div.classList.add('message');
         div.innerHTML = 
         `
@@ -121,3 +113,58 @@ document.addEventListener('DOMContentLoaded', function() {
     M.Sidenav.init(menus, {edge: 'left'});
     
   });
+
+function timer() {
+    var countDown = 9;
+    var pulse = 0;
+    
+    var x = setInterval(function() {
+
+        var distance = countDown - pulse;    
+        pulse += 1;
+        document.getElementById("timer").innerHTML = '0' + distance;
+        if (distance < 0) {
+          clearInterval(x);
+          document.getElementById('msg').disabled = true;
+          document.getElementById('msg').value = "SORRY!! TIME OUT!!";
+          document.getElementById("timer").innerHTML = "00";
+          socket.emit('chatMessage', `${username} - Timeout!!`);
+        }
+      }, 1000);    
+}
+
+function callTimer(users) {
+    sec = (users.length - 1) * 10;
+    console.log("sec", sec);
+    
+    // startCount(sec);
+}
+
+function timedCount(sec) {
+    document.getElementById("timer").innerText = '0' + count;
+    // count = count - 1;
+    // console.log(count);    
+    t = setTimeout(timedCount, 1000);
+    if( count < 0 ) {
+        clearTimeout(t);
+        document.getElementById('msg').disabled = true;
+        document.getElementById('msg').value = "SORRY!! TIME OUT!!";
+        setInterval(function() {
+            stopCount();
+            startCount(sec)
+        }, sec);
+    }
+}
+
+function startCount(sec) {
+  if (!timer_is_on) {
+    timer_is_on = 1;
+    timedCount(sec);
+  }
+}
+
+function stopCount() {
+  clearTimeout(t);
+  timer_is_on = 0;
+  count = 9;
+}

@@ -1,4 +1,4 @@
-const socket = io();
+// const socket = io();
 
 const createRoomDiv = document.getElementById('createRoom');
 const showRoomCode = document.getElementById('showRoomCode');
@@ -12,12 +12,24 @@ const createForm = document.getElementById('create-form');
 
 createForm.addEventListener('submit', (e) => {
     // e.preventDefault();
-    var val = Math.floor(1000 + Math.random() * 9000);
-    console.log(val);
-    document.getElementById("roomcode").innerHTML = val;
-})
+    if(document.getElementById('username').value === ''){
+        document.getElementById('error').innerText = "Please enter any username!";
+    } else {
+        var val = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById("roomcode").innerHTML = val;
+
+        document.getElementById('error').innerText = "";
+    }
+});
 
 function generateRoomCode() {
+
+    if(document.getElementById('username').value === ''){
+        document.getElementById('error').innerText = "Please enter any username!";
+    } else {
+        document.getElementById('error').innerText = "";
+    }
+
     var val = Math.floor(1000 + Math.random() * 9000);
     
     document.getElementById("code").value = val;
@@ -33,3 +45,13 @@ document.addEventListener('DOMContentLoaded', function() {
     M.Sidenav.init(menus, {edge: 'left'});
     
   });
+
+  function validateUsername() {
+    if(document.getElementById('username').value === ''){
+        document.getElementById('error').innerText = "Please enter any username!";
+        document.getElementById("btnCreate").disabled = true;
+    } else {
+        document.getElementById('error').innerText = "";
+        document.getElementById("btnCreate").disabled = false;
+    }
+  }
