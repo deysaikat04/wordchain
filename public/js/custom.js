@@ -130,14 +130,7 @@ function checkWord(msg) {
         document.getElementById('msg').style.border = '1px solid #ffffff';
         document.getElementById('sendBtn').disabled = false;
     }
-    
-    if(msg.match(regex)){
-        document.getElementById('msg').style.border = '1px solid #f44336';
-        document.getElementById('sendBtn').disabled = true;
-    } else {
-        document.getElementById('msg').style.border = '1px solid #ffffff';
-        document.getElementById('sendBtn').disabled = false;
-    }
+        
 }
 
 document.addEventListener('DOMContentLoaded', function() {
