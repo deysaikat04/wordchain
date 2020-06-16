@@ -120,9 +120,11 @@ function outputMessage(message) {
     document.querySelector('.chat-messages').appendChild(seperator);
 }
 
-function checkWord(msg) {    
+function checkWord(msg) {   
+    console.log(wordArr.sort());
+     
     let regex = /\s/;
-    let found = binarySearch(wordArr, msg, 0, wordArr.length);
+    let found = binarySearch(wordArr.sort(), msg, 0, wordArr.length);
     if(found) {
         document.getElementById('msg').style.border = '1px solid #f44336';
         document.getElementById('sendBtn').disabled = true;
