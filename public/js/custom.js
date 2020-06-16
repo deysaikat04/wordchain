@@ -121,17 +121,20 @@ function outputMessage(message) {
 }
 
 function checkWord(msg) {   
-    console.log(wordArr.sort());
+    // console.log(wordArr.sort());
      
     let regex = /\s/;
     let found = binarySearch(wordArr.sort(), msg, 0, wordArr.length);
-    if(found) {
+    // console.log(found);
+    
+    if(found || msg.match(regex)) {        
         document.getElementById('msg').style.border = '1px solid #f44336';
         document.getElementById('sendBtn').disabled = true;
-    } else {
+    } else {        
         document.getElementById('msg').style.border = '1px solid #ffffff';
         document.getElementById('sendBtn').disabled = false;
     }
+
         
 }
 
