@@ -9,7 +9,7 @@ const io = socketio(server);
 
 const formatMessage = require('./utils/messages');
 const { wordJoin, clearWords } = require('./utils/words');
-const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/users');
+const { userJoin, getCurrentUser, userLeave, getRoomUsers, updateUser } = require('./utils/users');
 
 //set static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -38,10 +38,10 @@ io.on('connection', (socket) => {
         socket.join(user.room);
 
         //welcome current user
-        // socket.emit('message', formatMessage(botName, 'Welcome in WordChain'));
+        socket.emit('botMessage', formatMessage(botName, 'Welcome in WordChain'));
 
         //Broadcast when user conencts
-        socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} has joined!`));
+        socket.broadcast.to(user.room).emit('botMessage', formatMessage(botName, `${user.username} has joined!`));
 
         // Send users and room info
         io.to(user.room).emit('roomUsers', {
@@ -51,11 +51,23 @@ io.on('connection', (socket) => {
 
     });
 
-    //listen for chatMessage
+    //listen for chatMessage 
     socket.on('chatMessage', (msg) => {
         const user = getCurrentUser(socket.id); 
         wordJoin(msg);
         io.to(user.room).emit('message', formatMessage(user.username, msg));
+    });
+
+     //listen for chatMessage
+     socket.on('startLetter', (msg) => {
+        const user = getCurrentUser(socket.id); 
+        let username = user.username;
+        io.to(user.room).emit('msgLetter', {username, msg});
+    });
+
+    socket.on("timeout", (username) => {        
+        const user = getCurrentUser(socket.id); 
+        io.to(user.room).emit('timeoutRes', ({username, msg:'Timeout!!'}));
     });
 
     //runs when client disconnects
@@ -65,9 +77,9 @@ io.on('connection', (socket) => {
         if(user) {
             io
             .to(user.room) 
-            .emit('message', formatMessage(botName, `${user.username} has left the game!`));
+            .emit('botMessage', formatMessage(botName, `${user.username} has left the game!`));
 
-            clearWords();
+            clearWords(); 
 
             // Send users and room info
             io.to(user.room).emit('roomUsers', {

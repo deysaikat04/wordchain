@@ -3,6 +3,7 @@ const socket = io();
 const createRoomDiv = document.getElementById('createRoom');
 const showRoomCode = document.getElementById('showRoomCode');
 
+
 // document.getElementById("code").style.display = 'none';
 document.getElementById("submitBtn").style.display = 'none';
 
@@ -63,4 +64,4 @@ document.addEventListener('DOMContentLoaded', function() {
     // callTimer(users);
     
     
-});
+}); 

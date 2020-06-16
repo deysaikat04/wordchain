@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WordChain</title>
-    <link rel="icon" type="image/png" href="/register.png">
+    <link rel="icon" type="image/png" href="./register.png">
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
@@ -84,6 +84,8 @@
                   <span class="helper-text">Room code will generate automatically..</span>
                 </div>
 
+                <input type="hidden" name="token" value="true" />
+
                 <div class="input-field col s12 center" id="generateBtn">
                   <button 
                     class="btn waves-effect waves-light btn-small" 
@@ -130,8 +132,10 @@
                 <span class="helper-text">This is the room code that has aalready been created.</span>
               </div>
 
+              <input type="hidden" name="token" value="false" />
+
               <div class="input-field col s12 center">
-                <button class="btn waves-effect waves-light btn-small" type="submit" name="action">
+                <button class="btn waves-effect waves-light btn-small" type="submit">
                   Go
                 </button>
               </div>

@@ -1,7 +1,7 @@
-const users = [];
-
+var users = [];
+ 
 function userJoin( id, username, room ) {
-    const user = { id, username, room };
+    const user = { id, username, room, turn: false };
 
     users.push(user);
 
@@ -26,9 +26,15 @@ function getRoomUsers(room) {
     return users.filter(user => user.room === room);
 }
 
+//update users array based on turn
+function updateUser(newUser) {
+    users = newUser;
+}
+
 module.exports = {
     userJoin,
     getCurrentUser,
     userLeave,
-    getRoomUsers
+    getRoomUsers,
+    updateUser
 }

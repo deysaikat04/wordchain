@@ -211,6 +211,20 @@
   box-shadow: 2px 5px 12px 0 rgba(11,46,109,.4);
 }
 
+.timeout-msg {
+  color: #000000;
+  /* margin-bottom: 20px; */
+  font-size: 16px;
+  /* background-color: var(--light-color-b); */
+  /* background-image: linear-gradient(-260deg, #E57373, #EF5350); */
+  /* border-radius: 25px; */
+  /* box-shadow: 2px 5px 12px 0 rgba(11,46,109,.4); */
+}
+
+.timeout-msg p {
+  text-align: center;
+}
+
 .chat-messages .message .chat-text{
   margin-top: 0px;
   margin-right: 20px;
