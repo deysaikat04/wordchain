@@ -12,7 +12,7 @@ const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const userList = document.getElementById('side-menu');
 
-var currUser;
+var userCount = 0;
 
 // Get username and room
 const { username, room } = Qs.parse(location.search, {
@@ -27,20 +27,17 @@ socket.on('message', message => {
 
     outputMessage(message);    
     //Scroll down
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-
+    chatMessages.scrollTop = chatMessages.scrollHeight;    
     
-    // setTimeout(()=>{
-    //    startCount();
-        
-    // }, 10000);
+    
 });
 
 socket.on('roomUsers', ({ room, users }) => {
 
     // console.log(users.length);
     // callTimer(users);
-    
+    userCount = users.length;
+
     userList.innerHTML = `
         <li><a class="subheader">WORDCHAIN</a></li> 
         ${users.map(user => `
@@ -63,6 +60,8 @@ socket.on('roomUsers', ({ room, users }) => {
 });
 
 chatForm.addEventListener('submit', (e) => {
+    
+
     e.preventDefault();
     // console.log(wordArr);
     // stopCount();
@@ -75,6 +74,10 @@ chatForm.addEventListener('submit', (e) => {
     e.target.elements.msg.value = '';
     e.target.elements.msg.focus();
     e.target.elements.msg.disabled = false;
+
+    // clearInterval(interval);
+    // stopCount();    
+    
 });
 
 //output message to DOM
@@ -83,6 +86,8 @@ function outputMessage(message) {
     const div = document.createElement('div');
     
     if(message.username === username) {
+        
+        
 
         div.classList.add('message');
         div.innerHTML = 
@@ -97,6 +102,7 @@ function outputMessage(message) {
 
     }
     else {
+
         div.classList.add('message-sender');
         div.innerHTML = 
         `
@@ -115,16 +121,15 @@ function outputMessage(message) {
 }
 
 function checkWord(msg) {    
+    let regex = /\s/;
     let found = binarySearch(wordArr, msg, 0, wordArr.length);
-    if(found) {
+    if(found || msg.match(regex)) {
         document.getElementById('msg').style.border = '1px solid #f44336';
         document.getElementById('sendBtn').disabled = true;
     } else {
         document.getElementById('msg').style.border = '1px solid #ffffff';
         document.getElementById('sendBtn').disabled = false;
-    }
-   
-    
+    }    
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -134,39 +139,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
   });
 
-function timer() {
-    var countDown = 9;
-    var pulse = 0;
-    
-    var x = setInterval(function() {
-
-        var distance = countDown - pulse;    
-        pulse += 1;
-        document.getElementById("timer").innerHTML = '0' + distance;
-        if (distance < 0) {
-          clearInterval(x);
-          document.getElementById('msg').disabled = true;
-          document.getElementById('msg').value = "SORRY!! TIME OUT!!";
-          document.getElementById("timer").innerHTML = "00";
-          socket.emit('chatMessage', `${username} - Timeout!!`);
-        }
-      }, 1000);    
-}
-
-function callTimer(users) {
-    sec = (users.length - 1) * 10;
-    console.log("sec", sec);
-    
-    startCount();
+function callTimer() {
+    sec = (userCount - 1) * 1000;
+    interval = setInterval(()=>{
+        startCount();
+    }, sec);
 }
 
 function timedCount() {
     document.getElementById("timer").innerText = '0' + count;
-    // count = count - 1;
+    count = count - 1;
     // console.log(count);    
     t = setTimeout(timedCount, 1000);
     if( count < 0 ) {
-        clearTimeout(t);
         document.getElementById('msg').disabled = true;
         document.getElementById('msg').value = "SORRY!! TIME OUT!!";
         stopCount();
@@ -178,7 +163,7 @@ function timedCount() {
 }
 
 function startCount() {
-    console.log("I am called!!!");
+    // console.log("I am called!!!");
     
   if (!timer_is_on) {
     timer_is_on = 1;
@@ -206,3 +191,5 @@ function binarySearch(arr, element, start, end) {
     else    
         return binarySearch(arr, element, mid+1, end); 
 } 
+
+
