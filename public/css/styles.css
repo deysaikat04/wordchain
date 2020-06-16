@@ -181,7 +181,7 @@
 
 .chat-messages {
   padding: 12px;
-  margin-bottom: 15px;
+  margin-bottom: 30px;
   max-height: 85vh;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -239,7 +239,7 @@
   opacity: 0.6;
   margin-top: 6px;
   margin-bottom: 7px;
-  margin-left: 10px;
+  margin-left: 20px;
 }
 
 .chat-messages .message .meta p,  .chat-messages .message-sender .meta span {
@@ -272,6 +272,7 @@
   background: #e8e8e8;
   border-radius: 25px;
   box-shadow: none;
+  border: 1px solid #ffffff;
 }
 .timer {
   color: #ffffff;

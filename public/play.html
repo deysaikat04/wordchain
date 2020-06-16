@@ -61,13 +61,14 @@
         </main>
         <div class="chat-form-container col s12">          
           <span class="timer" id="timer">10</span>
-          <form id="chat-form">            
+          <form id="chat-form" name="chatForm">            
             <input
               id="msg"
+              name="msg"
               class="chat-input col s8"
               type="text"
               placeholder="Enter Message"
-              
+              onkeyup="checkWord(chatForm.msg.value)"
               required
               autocomplete="off"
             />

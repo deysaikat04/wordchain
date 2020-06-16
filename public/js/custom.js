@@ -1,5 +1,6 @@
 const socket = io();
 
+var wordArr = [];
 
 var count = 9;
 var t;
@@ -21,16 +22,24 @@ const { username, room } = Qs.parse(location.search, {
 //Join chatroom
 socket.emit('joinRoom', { username, room });
 
-socket.on('message', message => {    
+socket.on('message', message => { 
+    wordArr = message.words;
+
     outputMessage(message);    
     //Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    
+    // setTimeout(()=>{
+    //    startCount();
+        
+    // }, 10000);
 });
 
 socket.on('roomUsers', ({ room, users }) => {
 
-    console.log(users.length);
-    callTimer(users);
+    // console.log(users.length);
+    // callTimer(users);
     
     userList.innerHTML = `
         <li><a class="subheader">WORDCHAIN</a></li> 
@@ -55,7 +64,7 @@ socket.on('roomUsers', ({ room, users }) => {
 
 chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
-
+    // console.log(wordArr);
     // stopCount();
     //get msg
     const msg = e.target.elements.msg.value;
@@ -64,7 +73,7 @@ chatForm.addEventListener('submit', (e) => {
     socket.emit('chatMessage', msg);
 
     e.target.elements.msg.value = '';
-    e.target.elements.msg.blur();
+    e.target.elements.msg.focus();
     e.target.elements.msg.disabled = false;
 });
 
@@ -105,7 +114,16 @@ function outputMessage(message) {
     document.querySelector('.chat-messages').appendChild(seperator);
 }
 
-
+function checkWord(msg) {    
+    let found = binarySearch(wordArr, msg, 0, wordArr.length);
+    if(found) {
+        document.getElementById('msg').style.border = '1px solid #f44336';
+    } else {
+        document.getElementById('msg').style.border = '1px solid #ffffff';
+    }
+   
+    
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     // nav menu
@@ -137,10 +155,10 @@ function callTimer(users) {
     sec = (users.length - 1) * 10;
     console.log("sec", sec);
     
-    // startCount(sec);
+    startCount();
 }
 
-function timedCount(sec) {
+function timedCount() {
     document.getElementById("timer").innerText = '0' + count;
     // count = count - 1;
     // console.log(count);    
@@ -149,17 +167,20 @@ function timedCount(sec) {
         clearTimeout(t);
         document.getElementById('msg').disabled = true;
         document.getElementById('msg').value = "SORRY!! TIME OUT!!";
-        setInterval(function() {
-            stopCount();
-            startCount(sec)
-        }, sec);
+        stopCount();
+        // setInterval(function() {
+        //     stopCount();
+        //     startCount(sec)
+        // }, sec);
     }
 }
 
-function startCount(sec) {
+function startCount() {
+    console.log("I am called!!!");
+    
   if (!timer_is_on) {
     timer_is_on = 1;
-    timedCount(sec);
+    timedCount();
   }
 }
 
@@ -168,3 +189,18 @@ function stopCount() {
   timer_is_on = 0;
   count = 9;
 }
+
+//Binary Search
+function binarySearch(arr, element, start, end) { 
+
+    if (start > end) return false; 
+
+    let mid = Math.floor((start + end)/2);
+
+    if (arr[mid] === element) return true; 
+
+    if(arr[mid] > element)  
+        return binarySearch(arr, element, start, mid-1); 
+    else    
+        return binarySearch(arr, element, mid+1, end); 
+} 

@@ -8,6 +8,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 const formatMessage = require('./utils/messages');
+const { wordJoin, clearWords } = require('./utils/words');
 const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/users');
 
 //set static folder
@@ -53,18 +54,20 @@ io.on('connection', (socket) => {
     //listen for chatMessage
     socket.on('chatMessage', (msg) => {
         const user = getCurrentUser(socket.id); 
-
+        wordJoin(msg);
         io.to(user.room).emit('message', formatMessage(user.username, msg));
     });
 
     //runs when client disconnects
     socket.on('disconnect', () => {
         const user = userLeave(socket.id);
-                
+                 
         if(user) {
             io
             .to(user.room) 
             .emit('message', formatMessage(botName, `${user.username} has left the game!`));
+
+            clearWords();
 
             // Send users and room info
             io.to(user.room).emit('roomUsers', {
@@ -77,6 +80,7 @@ io.on('connection', (socket) => {
     });
 
 });
+
 
 app.get('/', function(req, res){
     res.redirect('/index.html');
