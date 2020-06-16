@@ -212,7 +212,7 @@
 }
 
 .timeout-msg {
-  color: #000000;
+  color: #757575;
   /* margin-bottom: 20px; */
   font-size: 16px;
   /* background-color: var(--light-color-b); */
@@ -224,6 +224,17 @@
 .timeout-msg p {
   text-align: center;
 }
+
+.time {
+  color: #a9a9a9;
+  font-size: 12px;
+}
+
+.time-sender {
+  color: #a5a2a2;
+  font-size: 12px;
+}
+ 
 
 .chat-messages .message .chat-text{
   margin-top: 0px;

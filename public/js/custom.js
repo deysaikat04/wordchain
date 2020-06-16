@@ -167,7 +167,7 @@ function outputMessage(message) {
             <div>   
                 <p class="meta">${message.username} <span>${message.time}</span></p>
                 <p class="chat-text">
-                    ${message.text} ${count}s
+                    ${message.text} <span class="time">${count}s</span>
                 </p>
             </div>
         `;
@@ -182,7 +182,7 @@ function outputMessage(message) {
             <div>              
                 <p class="meta-sender">${message.username} <span>${message.time}</span></p>
                 <span class="chat-text-sender">
-                    ${message.text} ${count}s
+                    ${message.text} <span class="time-sender">${count}s</span>
                 </p>
             </div>
         `;
@@ -281,10 +281,10 @@ socket.on("timeoutRes", response => {
         
     div.classList.add('timeout-msg');
     div.innerHTML = 
-    `
-        
+    `        
         <p>${response.username + ' ' + response.msg} </p>
     `;
+    document.querySelector('.chat-messages').appendChild(div);
     if(response.username !== username) startCount();  
 });
 

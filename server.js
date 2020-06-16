@@ -67,7 +67,7 @@ io.on('connection', (socket) => {
 
     socket.on("timeout", (username) => {        
         const user = getCurrentUser(socket.id); 
-        io.to(user.room).emit('timeoutRes', ({username, msg:'Timeout!!'}));
+        io.to(user.room).emit('timeoutRes', ({username, msg:'Timeout!!'})); 
     });
 
     //runs when client disconnects
