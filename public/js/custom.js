@@ -123,13 +123,21 @@ function outputMessage(message) {
 function checkWord(msg) {    
     let regex = /\s/;
     let found = binarySearch(wordArr, msg, 0, wordArr.length);
-    if(found || msg.match(regex)) {
+    if(found) {
         document.getElementById('msg').style.border = '1px solid #f44336';
         document.getElementById('sendBtn').disabled = true;
     } else {
         document.getElementById('msg').style.border = '1px solid #ffffff';
         document.getElementById('sendBtn').disabled = false;
-    }    
+    }
+    
+    if(msg.match(regex)){
+        document.getElementById('msg').style.border = '1px solid #f44336';
+        document.getElementById('sendBtn').disabled = true;
+    } else {
+        document.getElementById('msg').style.border = '1px solid #ffffff';
+        document.getElementById('sendBtn').disabled = false;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
