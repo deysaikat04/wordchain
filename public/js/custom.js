@@ -118,8 +118,10 @@ function checkWord(msg) {
     let found = binarySearch(wordArr, msg, 0, wordArr.length);
     if(found) {
         document.getElementById('msg').style.border = '1px solid #f44336';
+        document.getElementById('sendBtn').disabled = true;
     } else {
         document.getElementById('msg').style.border = '1px solid #ffffff';
+        document.getElementById('sendBtn').disabled = false;
     }
    
     

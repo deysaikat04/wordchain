@@ -1,4 +1,4 @@
-// const socket = io();
+const socket = io();
 
 const createRoomDiv = document.getElementById('createRoom');
 const showRoomCode = document.getElementById('showRoomCode');
@@ -55,3 +55,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("btnCreate").disabled = false;
     }
   }
+
+
+  socket.on('roomUsers', ({ room, users }) => {
+
+    console.log(users, room);
+    // callTimer(users);
+    
+    
+});
