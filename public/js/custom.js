@@ -243,7 +243,7 @@ function play() {
     socket.emit("nextTurn", userArr[0]);
     setInterval(function() {
         socket.emit("nextTurn", nextUser);
-    }, 5000);
+    }, 10000);
 }
 
 // function callTimer() {
