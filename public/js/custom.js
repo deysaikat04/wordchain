@@ -6,6 +6,7 @@ var nextUser;
 var count = 9;
 var t;
 var timer_is_on = 0;
+var MAX_WAITING = 10000;
 
 var user_turn = false;
 var userArr = [];
@@ -13,8 +14,6 @@ var userArr = [];
 var typing=false;
 var timeout=undefined;
 var user;
-// const createForm = document.getElementById('create-form');
-// // const chatMessages = document.querySelector('.chat-messages');
 
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
@@ -47,9 +46,8 @@ socket.on('message', message => {
     
     outputMessage(message);    
     //Scroll down
-    chatMessages.scrollTop = chatMessages.scrollHeight;   
-    
-    
+    chatMessages.scrollTop = chatMessages.scrollHeight;  
+        
 });
 
 socket.on("nextUser", data => {
@@ -131,8 +129,6 @@ socket.on('roomUsers', ({ room, users }) => {
 chatForm.addEventListener('submit', (e) => {    
 
     e.preventDefault();
-
-    // console.log(username, user_turn);
     
     if(user_turn) {
         const msg = e.target.elements.msg.value;
@@ -144,42 +140,25 @@ chatForm.addEventListener('submit', (e) => {
 
         e.target.elements.msg.value = '';
         e.target.elements.msg.focus();
-    }
-    // clearInterval(interval);
-    // stopCount();    
+        
+    } 
     
 });
 
 function setTurn() {
     if(nextUser.username === username) {
        user_turn = nextUser.turn;  
-       
-       
+       startCount();
     }
 }
-
-// socket.on("userTurn", newUser => {
-//     // userArr = newUser;
-//     // console.log(newUser);
-//     newUser.map((user) => {
-//         if(user.username === username) {
-//             user_turn = user.turn;
-//         }        
-//     });
-
-//     userArr = newUser;
-//     // callTimer(); 
-// });
 
 //output message to DOM
 function outputMessage(message) {
     
     const div = document.createElement('div');
     
-    if(message.username === username) {
-       
-        stopCount();
-        
+    if(message.username === username) {     
+                
         div.classList.add('message');
         div.innerHTML = 
         `
@@ -190,10 +169,9 @@ function outputMessage(message) {
                 </p>
             </div>
         `;
-
+        stopCount();
     }
     else {
-        console.log("My turn", username);
         startCount();
         div.classList.add('message-sender');
         div.innerHTML = 
@@ -237,46 +215,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function play() {
-    // document.getElementById("startBtn").style.display = 'none';
+    document.getElementById("startBtn").style.display = 'none';
     // callTimer();
     // startCount();
     socket.emit("nextTurn", userArr[0]);
-    setInterval(function() {
-        socket.emit("nextTurn", nextUser);
-    }, 10000);
+    
+    callInterval();
 }
 
-// function callTimer() {
-//     sec = userCount > 1 ? (userCount - 1) * 10000 : 10000;
-//     console.log(user_turn);
-    
-//     if(user_turn){    
-//         console.log(username);
-        
-//         interval = setInterval(
-//             "handleIntervalTasks()", sec
-//         );
-//     }
-// }
-
-// function handleIntervalTasks() { 
-    
-//     let index = -1;
-//     userArr.map((user, i) => {
-//         if(user.username === username) {
-//             user.turn = false;
-//             index = i;
-//         }        
-//     });
-    
-//     index === userArr.length-1 ? index = 0 : index += 1;    
-//     userArr[index].turn = true;
-
-//     console.log(userArr);    
-//     socket.emit("turn", userArr);
-//     startCount();  
-//     // callTimer();
-// }
+function callInterval() {
+    setInterval(function() {
+        socket.emit("nextTurn", nextUser);
+    }, MAX_WAITING);
+}
 
 function timedCount() {
     document.getElementById("timer").innerText = '0' + count;
@@ -314,9 +265,7 @@ socket.on("timeoutRes", response => {
     if(response.username !== username) startCount();  
 });
 
-function startCount() {
-    // console.log("I am called!!!");
-    
+function startCount() {    
   if (!timer_is_on) {
     timer_is_on = 1;
     timedCount();
