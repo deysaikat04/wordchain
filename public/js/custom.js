@@ -165,7 +165,7 @@ function outputMessage(message) {
         div.innerHTML = 
         `
             <div>   
-                <p class="meta">${message.username} <span>${message.time}</span></p>
+                <p class="meta">${message.username} </p>
                 <p class="chat-text">
                     ${message.text} <span class="time">${count}s</span>
                 </p>
@@ -180,7 +180,7 @@ function outputMessage(message) {
         div.innerHTML = 
         `
             <div>              
-                <p class="meta-sender">${message.username} <span>${message.time}</span></p>
+                <p class="meta-sender">${message.username}</p>
                 <span class="chat-text-sender">
                     ${message.text} <span class="time-sender">${count}s</span>
                 </p>
@@ -261,11 +261,14 @@ function timedCount() {
     // console.log(count);    
     t = setTimeout(timedCount, 1000);
     if( count < 0 ) {
-        // document.getElementById('msg').disabled = true;
+        // document.getElementById('sendBtn').disabled = true;
         document.getElementById('msg').placeholder = "SORRY!! TIME OUT!!";
         document.getElementById('msg').focus();
 
-        socket.emit("timeout", username);
+        socket.emit("timeout", username); 
+        // setTimeout(() => {
+        //     document.getElementById('sendBtn').disabled = false
+        // }, 5000);
 
         stopCount();
         // setInterval(function() {

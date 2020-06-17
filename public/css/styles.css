@@ -191,7 +191,12 @@
 .chat-messages .message {
   text-align: right;
   padding: 2px 0 5px 2px;
-  /* margin-bottom: 20px; */
+  width: 70%;
+  position: relative;
+  right: 20px;
+  float: right;
+  margin-bottom: 20px;
+  margin-left: 30%;
   font-size: 16px;
   /* background-color: var(--light-color); */
   background-image: linear-gradient(-260deg, #fffcfc, #ffffff);
@@ -203,7 +208,11 @@
   color: #ffffff;
   text-align: left;
   padding: 2px 0 0 2px;
-  /* margin-bottom: 20px; */
+  float: left;
+  width: 70%;
+  max-width: 100%;
+  margin-bottom: 20px;
+  margin-right: 30%;
   font-size: 16px;
   /* background-color: var(--light-color-b); */
   background-image: linear-gradient(-260deg, #6715ce, #2873fc);
@@ -213,8 +222,12 @@
 
 .timeout-msg {
   color: #757575;
-  /* margin-bottom: 20px; */
+  /* margin-top: 10px; */
+  position: relative;
+
+  margin-bottom: 20px;
   font-size: 16px;
+  width: 100%;
   /* background-color: var(--light-color-b); */
   /* background-image: linear-gradient(-260deg, #E57373, #EF5350); */
   /* border-radius: 25px; */
