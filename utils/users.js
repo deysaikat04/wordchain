@@ -27,8 +27,31 @@ function getRoomUsers(room) {
 }
 
 //update users array based on turn
-function updateUser(newUser) {
-    users = newUser;
+function updateUser(id) {
+    users.map((user) => {
+        if(user.id === id) {
+            user.turn = false;
+        }        
+    });
+}
+
+//get next user
+function getNextUser(id) {
+    // console.log("users", users);
+    var next = -1; 
+    users.map((user, index) => {
+        if(user.id === id) {
+            
+            if(index === users.length-1){                
+                next = 0;
+            } else {
+                next = index + 1
+            }
+        }          
+    });    
+    
+    if(next >= 0) return users[next]; 
+    
 }
 
 module.exports = {
@@ -36,5 +59,6 @@ module.exports = {
     getCurrentUser,
     userLeave,
     getRoomUsers,
-    updateUser
+    updateUser,
+    getNextUser
 }

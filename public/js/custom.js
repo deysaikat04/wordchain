@@ -2,12 +2,17 @@ const socket = io();
 
 var wordArr = [];
 var currUser = '';
+var nextUser;
 var count = 9;
 var t;
 var timer_is_on = 0;
 
 var user_turn = false;
 var userArr = [];
+
+var typing=false;
+var timeout=undefined;
+var user;
 // const createForm = document.getElementById('create-form');
 // // const chatMessages = document.querySelector('.chat-messages');
 
@@ -46,6 +51,12 @@ socket.on('message', message => {
     
     
 });
+
+socket.on("nextUser", data => {
+    nextUser = data;
+    document.getElementById("user-turn").innerText = `${nextUser.username}`;
+    setTurn();
+})
 
 socket.on('botMessage', message => { 
     currUser = message.username;
@@ -86,7 +97,7 @@ socket.on('roomUsers', ({ room, users }) => {
             user.turn = true;         
             
         } 
-    });
+    }); 
     
     socket.emit("turn", userArr);
     
@@ -123,19 +134,29 @@ chatForm.addEventListener('submit', (e) => {
 
     // console.log(username, user_turn);
     
-    const msg = e.target.elements.msg.value;
-    
-    //Emit a message to server
-    socket.emit('chatMessage', msg);
+    if(user_turn) {
+        const msg = e.target.elements.msg.value;
+        
+        //Emit a message to server
+        socket.emit('chatMessage', msg);
 
-    socket.emit('startLetter', msg.slice(-1).toUpperCase());
+        socket.emit('startLetter', msg.slice(-1).toUpperCase());
 
-    e.target.elements.msg.value = '';
-    e.target.elements.msg.focus();
+        e.target.elements.msg.value = '';
+        e.target.elements.msg.focus();
+    }
     // clearInterval(interval);
     // stopCount();    
     
 });
+
+function setTurn() {
+    if(nextUser.username === username) {
+       user_turn = nextUser.turn;  
+       
+       
+    }
+}
 
 // socket.on("userTurn", newUser => {
 //     // userArr = newUser;
@@ -152,8 +173,6 @@ chatForm.addEventListener('submit', (e) => {
 
 //output message to DOM
 function outputMessage(message) {
-
-    console.log(count);
     
     const div = document.createElement('div');
     
@@ -220,7 +239,11 @@ document.addEventListener('DOMContentLoaded', function() {
 function play() {
     // document.getElementById("startBtn").style.display = 'none';
     // callTimer();
-    startCount();
+    // startCount();
+    socket.emit("nextTurn", userArr[0]);
+    setInterval(function() {
+        socket.emit("nextTurn", nextUser);
+    }, 5000);
 }
 
 // function callTimer() {

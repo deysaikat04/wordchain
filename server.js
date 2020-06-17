@@ -9,7 +9,7 @@ const io = socketio(server);
 
 const formatMessage = require('./utils/messages');
 const { wordJoin, clearWords } = require('./utils/words');
-const { userJoin, getCurrentUser, userLeave, getRoomUsers, updateUser } = require('./utils/users');
+const { userJoin, getCurrentUser, userLeave, getRoomUsers, updateUser, getNextUser } = require('./utils/users');
 
 //set static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -69,6 +69,25 @@ io.on('connection', (socket) => {
         const user = getCurrentUser(socket.id); 
         io.to(user.room).emit('timeoutRes', ({username, msg:'Timeout!!'})); 
     });
+
+
+    socket.on("nextTurn", currUser => {
+        const user = getCurrentUser(currUser.id); 
+        updateUser(currUser.id); 
+
+        let nextUser = getNextUser(currUser.id);
+        if(nextUser) {
+            nextUser.turn = true;
+        }
+        // console.log(nextUser); 
+         
+        // console.log("all", getRoomUsers(user.room));  
+        io.to(user.room).emit("nextUser", nextUser); 
+    })
+
+
+
+
 
     //runs when client disconnects
     socket.on('disconnect', () => {
