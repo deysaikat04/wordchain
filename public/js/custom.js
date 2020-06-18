@@ -58,17 +58,25 @@ socket.on("nextUser", data => {
 
 socket.on('botMessage', message => { 
     currUser = message.username;
+
     const div = document.createElement('div');
-    div.classList.add('message-sender');
+        
+    div.classList.add('timeout-msg');
     div.innerHTML = 
-    `
-        <div>              
-            <p class="meta-sender">${message.username} <span>${message.time}</span></p>
-            <span class="chat-text-sender">
-                ${message.text}
-            </p>
-        </div>
-    `;     
+    `        
+        <p>${message.text}</p> 
+    `;
+    // const div = document.createElement('div');
+    // div.classList.add('message-sender');
+    // div.innerHTML = 
+    // `
+    //     <div>              
+    //         <p class="meta-sender">${message.username} <span>${message.time}</span></p>
+    //         <span class="chat-text-sender">
+    //             ${message.text}
+    //         </p>
+    //     </div>
+    // `;     
 
     document.querySelector('.chat-messages').appendChild(div);
     var seperator = document.createElement('br');
