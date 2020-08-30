@@ -11,9 +11,14 @@ var MAX_WAITING = 10000;
 var user_turn = false;
 var userArr = [];
 
-var typing=false;
-var timeout=undefined;
+var typing = false;
+var timeout = undefined;
 var user;
+
+//typing
+var typing = false;
+var typingTimeout = undefined;
+var typingUser;
 
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
@@ -27,43 +32,55 @@ const { username, room, token } = Qs.parse(location.search, {
 });
 
 // Set the start button who creates the room
-function setStart(){
-    if(token === "true") {        
+function setStart() {
+    console.log(userArr);
+    if (token === "true") {
         document.getElementById("startBtn").style.display = 'block';
     } else {
         document.getElementById("startBtn").style.display = 'none';
     }
 }
 
+//start the game
+function play() {
+    document.getElementById("startBtn").style.display = 'none';
+    // callTimer();
+    // startCount();
+    socket.emit("startTheGame", room);
+
+    callInterval();
+}
 
 //Join chatroom
 socket.emit('joinRoom', { username, room });
 
 //get the message
-socket.on('message', message => { 
+socket.on('message', message => {
     wordArr = message.words;
     currUser = message.username;
-    
-    outputMessage(message);    
+
+    outputMessage(message);
     //Scroll down
-    chatMessages.scrollTop = chatMessages.scrollHeight;  
-        
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
 });
 
+//get next user
 socket.on("nextUser", data => {
     nextUser = data;
     document.getElementById("user-turn").innerText = `${nextUser.username}`;
     setTurn();
 })
 
-socket.on('botMessage', message => { 
+// message from bot 
+socket.on('botMessage', message => {
     currUser = message.username;
 
     const div = document.createElement('div');
-        
+
     div.classList.add('timeout-msg');
-    div.innerHTML = 
-    `        
+    div.innerHTML =
+        `        
         <p>${message.text}</p> 
     `;
     // const div = document.createElement('div');
@@ -82,12 +99,13 @@ socket.on('botMessage', message => {
     var seperator = document.createElement('br');
     document.querySelector('.chat-messages').appendChild(seperator);
 
-    chatMessages.scrollTop = chatMessages.scrollHeight;   
-    
-    
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+
 });
 
-socket.on('msgLetter', data => { 
+//first letter of words
+socket.on('msgLetter', data => {
     // if(data.username !== username) {
     //     document.getElementById('msg').value = data.msg;
     // }
@@ -99,14 +117,14 @@ socket.on('roomUsers', ({ room, users }) => {
     userArr = users;
 
     userArr.map((user) => {
-        if(user.username === username) {
-            user.turn = true;         
-            
-        } 
-    }); 
-    
+        if (user.username === username) {
+            user.turn = true;
+
+        }
+    });
+
     socket.emit("turn", userArr);
-    
+
     // callTimer(users);
     userCount = users.length;
 
@@ -130,17 +148,17 @@ socket.on('roomUsers', ({ room, users }) => {
         </li>
       `;
 
-      
+
 });
 
 // chat form submit
-chatForm.addEventListener('submit', (e) => {    
+chatForm.addEventListener('submit', (e) => {
 
     e.preventDefault();
-    
-    if(user_turn) {
+
+    if (user_turn) {
         const msg = e.target.elements.msg.value;
-        
+
         //Emit a message to server
         socket.emit('chatMessage', msg);
 
@@ -148,28 +166,62 @@ chatForm.addEventListener('submit', (e) => {
 
         e.target.elements.msg.value = '';
         e.target.elements.msg.focus();
-        
-    } 
-    
+
+    }
+
 });
 
+// user typing..
+chatForm.addEventListener('keypress', (e) => {
+
+    if (e.which != 13) {
+        typing = true
+        socket.emit('typing', { user: username, typing: true })
+        clearTimeout(typingTimeout)
+        timeout = setTimeout(typingTimeoutFun, 3000)
+    } else {
+        clearTimeout(timeout)
+        typingTimeoutFun()
+        //sendMessage() function will be called once the user hits enter
+        // sendMessage()
+    }
+
+});
+
+socket.on('display', (data) => {
+    const div = document.createElement('div');
+
+    if (data.typing == true) {
+
+        div.innerHTML =
+            `        
+                <p>${data.user}' is typing... </p>
+            `;
+        document.querySelector('.chat-messages').appendChild(div);
+    }
+    else {
+        document.querySelector('.chat-messages').removeChild(div);
+    }
+
+})
+
 function setTurn() {
-    if(nextUser.username === username) {
-       user_turn = nextUser.turn;  
-       startCount();
+    if (nextUser.username === username) {
+        user_turn = nextUser.turn;
+        startCount();
     }
 }
 
 //output message to DOM
 function outputMessage(message) {
-    
+
     const div = document.createElement('div');
-    
-    if(message.username === username) {     
-                
+
+    if (message.username === username) {
+
         div.classList.add('message');
-        div.innerHTML = 
-        `
+        div.innerHTML =
+            `
             <div>   
                 <p class="meta">${message.username} </p>
                 <p class="chat-text">
@@ -182,8 +234,8 @@ function outputMessage(message) {
     else {
         startCount();
         div.classList.add('message-sender');
-        div.innerHTML = 
-        `
+        div.innerHTML =
+            `
             <div>              
                 <p class="meta-sender">${message.username}</p>
                 <span class="chat-text-sender">
@@ -191,48 +243,41 @@ function outputMessage(message) {
                 </p>
             </div>
         `;
-    }       
+    }
 
     document.querySelector('.chat-messages').appendChild(div);
     var seperator = document.createElement('br');
     document.querySelector('.chat-messages').appendChild(seperator);
 }
 
-function checkWord(msg) {   
+//check word form list if it's already used
+function checkWord(msg) {
     // console.log(wordArr.sort());
-     
+
     let regex = /\s/;
     let found = binarySearch(wordArr.sort(), msg, 0, wordArr.length);
     // console.log(found);
-    
-    if(found || msg.match(regex)) {        
+
+    if (found || msg.match(regex)) {
         document.getElementById('msg').style.border = '1px solid #f44336';
         document.getElementById('sendBtn').disabled = true;
-    } else {        
+    } else {
         document.getElementById('msg').style.border = '1px solid #ffffff';
         document.getElementById('sendBtn').disabled = false;
-    }        
+    }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // nav menu
     const menus = document.querySelectorAll('.side-menu');
-    M.Sidenav.init(menus, {edge: 'left'});
-    
-  });
+    M.Sidenav.init(menus, { edge: 'left' });
+
+});
 
 
-function play() {
-    document.getElementById("startBtn").style.display = 'none';
-    // callTimer();
-    // startCount();
-    socket.emit("nextTurn", userArr[0]);
-    
-    callInterval();
-}
 
 function callInterval() {
-    setInterval(function() {
+    setInterval(function () {
         socket.emit("nextTurn", nextUser);
     }, MAX_WAITING);
 }
@@ -242,12 +287,12 @@ function timedCount() {
     count = count - 1;
     // console.log(count);    
     t = setTimeout(timedCount, 1000);
-    if( count < 0 ) {
+    if (count < 0) {
         // document.getElementById('sendBtn').disabled = true;
         document.getElementById('msg').placeholder = "SORRY!! TIME OUT!!";
         document.getElementById('msg').focus();
 
-        socket.emit("timeout", username); 
+        socket.emit("timeout", username);
         // setTimeout(() => {
         //     document.getElementById('sendBtn').disabled = false
         // }, 5000);
@@ -260,45 +305,46 @@ function timedCount() {
     }
 }
 
+// timeout message
 socket.on("timeoutRes", response => {
-    
+
     const div = document.createElement('div');
-        
+
     div.classList.add('timeout-msg');
-    div.innerHTML = 
-    `        
+    div.innerHTML =
+        `        
         <p>${response.username + ' ' + response.msg} </p>
     `;
     document.querySelector('.chat-messages').appendChild(div);
-    if(response.username !== username) startCount();  
+    if (response.username !== username) startCount();
 });
 
-function startCount() {    
-  if (!timer_is_on) {
-    timer_is_on = 1;
-    timedCount();
-  }
+function startCount() {
+    if (!timer_is_on) {
+        timer_is_on = 1;
+        timedCount();
+    }
 }
 
 function stopCount() {
-  clearTimeout(t);
-  timer_is_on = 0;
-  count = 9;
+    clearTimeout(t);
+    timer_is_on = 0;
+    count = 9;
 }
 
 //Binary Search
-function binarySearch(arr, element, start, end) { 
+function binarySearch(arr, element, start, end) {
 
-    if (start > end) return false; 
+    if (start > end) return false;
 
-    let mid = Math.floor((start + end)/2);
+    let mid = Math.floor((start + end) / 2);
 
-    if (arr[mid] === element) return true; 
+    if (arr[mid] === element) return true;
 
-    if(arr[mid] > element)  
-        return binarySearch(arr, element, start, mid-1); 
-    else    
-        return binarySearch(arr, element, mid+1, end);  
-} 
+    if (arr[mid] > element)
+        return binarySearch(arr, element, start, mid - 1);
+    else
+        return binarySearch(arr, element, mid + 1, end);
+}
 
 

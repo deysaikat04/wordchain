@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
     socket.on('joinRoom', ({ username, room }) => {
         // const user = userJoin(socket.io, username, room);
         const user = userJoin(socket.id, username, room);
-       
+
 
         socket.join(user.room);
 
@@ -53,36 +53,57 @@ io.on('connection', (socket) => {
 
     //listen for chatMessage 
     socket.on('chatMessage', (msg) => {
-        const user = getCurrentUser(socket.id); 
+        console.log(msg);
+        const user = getCurrentUser(socket.id);
         wordJoin(msg);
         io.to(user.room).emit('message', formatMessage(user.username, msg));
     });
 
-     //listen for chatMessage
-     socket.on('startLetter', (msg) => {
-        const user = getCurrentUser(socket.id); 
+    //listen for chatMessage
+    socket.on('startLetter', (msg) => {
+        const user = getCurrentUser(socket.id);
         let username = user.username;
-        io.to(user.room).emit('msgLetter', {username, msg});
+        io.to(user.room).emit('msgLetter', { username, msg });
     });
 
-    socket.on("timeout", (username) => {        
-        const user = getCurrentUser(socket.id); 
-        io.to(user.room).emit('timeoutRes', ({username, msg:'Timeout!!'})); 
+    socket.on("timeout", (username) => {
+        const user = getCurrentUser(socket.id);
+        io.to(user.room).emit('timeoutRes', ({ username, msg: 'Timeout!!' }));
     });
 
+
+    socket.on("startTheGame", room => {
+        let userArr = [];
+        userArr = getRoomUsers(room);
+
+        if (userArr[0]) {
+            userArr[0].turn = true;
+        }
+
+        console.log(userArr[0]);
+
+        io.to(room).emit("nextUser", userArr[0]);
+    });
 
     socket.on("nextTurn", currUser => {
-        const user = getCurrentUser(currUser.id); 
-        updateUser(currUser.id); 
+        const user = getCurrentUser(currUser.id);
+        updateUser(currUser.id);
 
         let nextUser = getNextUser(currUser.id);
-        if(nextUser) {
+        if (nextUser) {
             nextUser.turn = true;
         }
-        // console.log(nextUser); 
-         
+
+
         // console.log("all", getRoomUsers(user.room));  
-        io.to(user.room).emit("nextUser", nextUser); 
+        io.to(user.room).emit("nextUser", nextUser);
+    });
+
+    socket.on('typing', (data) => {
+        if (data.typing == true)
+            io.emit('display', data)
+        else
+            io.emit('display', data)
     })
 
 
@@ -92,13 +113,13 @@ io.on('connection', (socket) => {
     //runs when client disconnects
     socket.on('disconnect', () => {
         const user = userLeave(socket.id);
-                 
-        if(user) {
-            io
-            .to(user.room) 
-            .emit('botMessage', formatMessage(botName, `${user.username} has left the game!`));
 
-            clearWords(); 
+        if (user) {
+            io
+                .to(user.room)
+                .emit('botMessage', formatMessage(botName, `${user.username} has left the game!`));
+
+            clearWords();
 
             // Send users and room info
             io.to(user.room).emit('roomUsers', {
@@ -106,17 +127,17 @@ io.on('connection', (socket) => {
                 users: getRoomUsers(user.room)
             });
         }
- 
-        
+
+
     });
 
 });
 
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
     res.redirect('/index.html');
- });
+});
 
-const PORT = process.env.PORT || 3000 ;
+const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => console.log(`Server is running on ${PORT}`));

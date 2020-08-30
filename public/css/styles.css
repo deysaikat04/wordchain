@@ -35,7 +35,11 @@
   }
   nav a{
     text-transform: uppercase;
-    color: #5431dc;
+    /* color: #5431dc; */
+    background: -webkit-linear-gradient(-260deg, #2f68f6, #38b16b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+    
     margin-left: 5px;
   }
   nav a span{
@@ -46,7 +50,7 @@
   }
 
  .theme-color {
-   color: #5431dc;
+   color: #6794f5;
    cursor: pointer;
  }
   
@@ -117,14 +121,15 @@
   }
 
   #chat-form button {
-    background-image: linear-gradient(-260deg, #6715ce, #2873fc);
+    /* background-image: linear-gradient(-260deg, #6715ce, #2873fc); */
+    background-image: linear-gradient(-260deg, #349cb6, #5e8df7)
   }
 
   .btn, .btn:hover, .btn:active, .btn:active, .btn:focus{
     /* background: var(--accent); */
     background-image: linear-gradient(-260deg, #6715ce, #2873fc);
     width: 50%;
-    box-shadow: 0 4px 10px 0 rgba(145,77,253,.3);
+    box-shadow: 0 4px 10px 0 rgb(121, 163, 255);
     border-radius: 50px;
   }
 
@@ -199,7 +204,7 @@
   padding: 2px 0 5px 2px;
   width: 70%;
   position: relative;
-  right: 20px;
+  /* right: 8px; */
   float: right;
   margin-bottom: 20px;
   margin-left: 30%;
@@ -221,9 +226,9 @@
   margin-right: 30%;
   font-size: 16px;
   /* background-color: var(--light-color-b); */
-  background-image: linear-gradient(-260deg, #6715ce, #2873fc);
+  background-image: linear-gradient(-260deg, #6938ca, #4788ff);
   border-radius: 0 40px 40px 25px;
-  box-shadow: 2px 5px 12px 0 rgba(11,46,109,.4);
+  box-shadow: 2px 5px 12px 0 rgb(147, 177, 255);
 }
 
 .chat-messages .message-sender-two {
