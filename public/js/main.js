@@ -11,28 +11,28 @@ const createForm = document.getElementById('create-form');
 // const chatMessages = document.querySelector('.chat-messages');
 
 
-createForm.addEventListener('submit', (e) => {
-    // e.preventDefault();
-    if(document.getElementById('username').value === ''){
-        document.getElementById('error').innerText = "Please enter any username!";
-    } else {
-        var val = Math.floor(1000 + Math.random() * 9000);
-        document.getElementById("roomcode").innerHTML = val;
+// createForm.addEventListener('submit', (e) => {
+//     // e.preventDefault();
+//     if (document.getElementById('username').value === '') {
+//         document.getElementById('error').innerText = "Please enter any username!";
+//     } else {
+//         var val = Math.floor(1000 + Math.random() * 9000);
+//         document.getElementById("roomcode").innerText = val;
 
-        document.getElementById('error').innerText = "";
-    }
-});
+//         document.getElementById('error').innerText = "";
+//     }
+// });
 
 function generateRoomCode() {
 
-    if(document.getElementById('username').value === ''){
+    if (document.getElementById('username').value === '') {
         document.getElementById('error').innerText = "Please enter any username!";
     } else {
         document.getElementById('error').innerText = "";
     }
 
     var val = Math.floor(1000 + Math.random() * 9000);
-    
+
     document.getElementById("code").value = val;
 
     // document.getElementById("code").style.display = 'block';
@@ -40,28 +40,31 @@ function generateRoomCode() {
     document.getElementById("submitBtn").style.display = 'block';
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // nav menu
     const menus = document.querySelectorAll('.side-menu');
-    M.Sidenav.init(menus, {edge: 'left'});
-    
-  });
+    M.Sidenav.init(menus, { edge: 'left' });
 
-  function validateUsername() {
-    if(document.getElementById('username').value === ''){
+});
+
+function validateUsername() {
+    if (document.getElementById('username').value === '') {
         document.getElementById('error').innerText = "Please enter any username!";
         document.getElementById("btnCreate").disabled = true;
     } else {
         document.getElementById('error').innerText = "";
         document.getElementById("btnCreate").disabled = false;
     }
-  }
+}
+
+function checkIfRoomExists() {
+    console.log("hola");
+
+    // socket.on('roomUsers', ({ room, users }) => {
+
+    //     console.log(users, room);
+    //     // callTimer(users);
 
 
-  socket.on('roomUsers', ({ room, users }) => {
-
-    console.log(users, room);
-    // callTimer(users);
-    
-    
-}); 
+    // });
+}

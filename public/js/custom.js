@@ -1,19 +1,20 @@
 const socket = io();
 
 var wordArr = [];
+var alphabets = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 var currUser = '';
 var nextUser;
 var count = 9;
 var t;
 var timer_is_on = 0;
 var MAX_WAITING = 10000;
+var MAX_TIMEOUT = 3;
 
 var user_turn = false;
 var userArr = [];
 
-var typing = false;
-var timeout = undefined;
-var user;
+var timeoutCount = {};
+var myScore = 0;
 
 //typing
 var typing = false;
@@ -76,6 +77,9 @@ socket.on("nextUser", data => {
 socket.on('botMessage', message => {
     currUser = message.username;
 
+    let i = Math.floor((Math.random() * 25));
+    console.log();
+
     const div = document.createElement('div');
 
     div.classList.add('timeout-msg');
@@ -83,6 +87,7 @@ socket.on('botMessage', message => {
         `        
         <p>${message.text}</p> 
     `;
+
     // const div = document.createElement('div');
     // div.classList.add('message-sender');
     // div.innerHTML = 
@@ -99,6 +104,19 @@ socket.on('botMessage', message => {
     var seperator = document.createElement('br');
     document.querySelector('.chat-messages').appendChild(seperator);
 
+
+    // const divTwo = document.createElement('div');
+
+    // divTwo.classList.add('timeout-msg');
+    // divTwo.innerHTML =
+    //     `        
+    //     <p>Let's begin with <span class="letter">'${alphabets[i]}'</span></p> 
+    // `;
+    // document.querySelector('.chat-messages').appendChild(divTwo);
+    // var seperatorTwo = document.createElement('br');
+    // document.querySelector('.chat-messages').appendChild(seperatorTwo);
+
+
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
 
@@ -114,13 +132,17 @@ socket.on('msgLetter', data => {
 //get the users and room details
 socket.on('roomUsers', ({ room, users }) => {
 
+    console.log(users);
+
     userArr = users;
 
     userArr.map((user) => {
         if (user.username === username) {
             user.turn = true;
-
+            myScore = user.score;
         }
+        let name = user.username;
+        timeoutCount[name] = 0;
     });
 
     socket.emit("turn", userArr);
@@ -132,9 +154,11 @@ socket.on('roomUsers', ({ room, users }) => {
         <li><a class="subheader">WORDCHAIN</a></li> 
         ${users.map(user => `
             <li>                
-            <a href="" class="waves-effect">
-            <i class="material-icons">account_circle</i>
-            ${user.username}</a>
+                <a href="" class="waves-effect">
+                    <i class="material-icons">account_circle</i>
+                    ${user.username}
+                    <span class="score">${user.score}</span>
+                </a>            
             </li>
         `).join('')}
         <li><div class="divider"></div></li>
@@ -166,44 +190,45 @@ chatForm.addEventListener('submit', (e) => {
 
         e.target.elements.msg.value = '';
         e.target.elements.msg.focus();
-
+        socket.emit("nextTurn", nextUser);
     }
 
 });
 
 // user typing..
-chatForm.addEventListener('keypress', (e) => {
+// chatForm.addEventListener('keypress', (e) => {
 
-    if (e.which != 13) {
-        typing = true
-        socket.emit('typing', { user: username, typing: true })
-        clearTimeout(typingTimeout)
-        timeout = setTimeout(typingTimeoutFun, 3000)
-    } else {
-        clearTimeout(timeout)
-        typingTimeoutFun()
-        //sendMessage() function will be called once the user hits enter
-        // sendMessage()
-    }
+//     if (e.which != 13) {
+//         typing = true
+//         socket.emit('typing', { user: username, typing: true })
+//         clearTimeout(typingTimeout)
+//         timeout = setTimeout(typingTimeoutFun, 3000)
+//     } else {
+//         clearTimeout(timeout)
+//         typingTimeoutFun()
+//         //sendMessage() function will be called once the user hits enter
+//         // sendMessage()
+//     }
 
-});
+// });
 
-socket.on('display', (data) => {
-    const div = document.createElement('div');
+// socket.on('display', (data) => {
+//     const div = document.createElement('div');
+//     div.classList.contains('typing') ? console.log("yes") :  console.log("no");
 
-    if (data.typing == true) {
+//     if (data.typing == true) {
+//         div.classList.add('typing');
+//         div.innerHTML =
+//             `        
+//                 <p>${data.user}'s typing </p>
+//             `;
+//         document.querySelector('.chat-messages').appendChild(div);
+//     }
+//     else {
+//         document.querySelector('.chat-messages').removeChild(div);
+//     }
 
-        div.innerHTML =
-            `        
-                <p>${data.user}' is typing... </p>
-            `;
-        document.querySelector('.chat-messages').appendChild(div);
-    }
-    else {
-        document.querySelector('.chat-messages').removeChild(div);
-    }
-
-})
+// })
 
 function setTurn() {
     if (nextUser.username === username) {
@@ -229,6 +254,10 @@ function outputMessage(message) {
                 </p>
             </div>
         `;
+
+        //send score      
+        socket.emit("score", { username, count });
+
         stopCount();
     }
     else {
@@ -249,6 +278,12 @@ function outputMessage(message) {
     var seperator = document.createElement('br');
     document.querySelector('.chat-messages').appendChild(seperator);
 }
+
+//get scores
+socket.on("updatedScore", (users) => {
+
+
+})
 
 //check word form list if it's already used
 function checkWord(msg) {
@@ -293,6 +328,12 @@ function timedCount() {
         document.getElementById('msg').focus();
 
         socket.emit("timeout", username);
+
+        timeoutCount[username] += 1;
+
+        if (timeoutCount[username] === MAX_TIMEOUT) {
+            console.log("Game Over");
+        }
         // setTimeout(() => {
         //     document.getElementById('sendBtn').disabled = false
         // }, 5000);

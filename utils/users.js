@@ -1,7 +1,7 @@
 var users = [];
- 
-function userJoin( id, username, room ) {
-    const user = { id, username, room, turn: false };
+
+function userJoin(id, username, room, timeout, score) {
+    const user = { id, username, room, turn: false, timeout: 0, score: 0 };
 
     users.push(user);
 
@@ -15,11 +15,11 @@ function getCurrentUser(id) {
 // User leaves chat
 function userLeave(id) {
     const index = users.findIndex(user => user.id === id);
-  
+
     if (index !== -1) {
-      return users.splice(index, 1)[0];
+        return users.splice(index, 1)[0];
     }
-  }
+}
 
 // Get room users
 function getRoomUsers(room) {
@@ -29,36 +29,68 @@ function getRoomUsers(room) {
 //update users array based on turn
 function updateUser(id) {
     users.map((user) => {
-        if(user.id === id) {
+        if (user.id === id) {
             user.turn = false;
-        }        
+        }
     });
 }
 
 //get next user
 function getNextUser(id) {
     // console.log("users", users);
-    var next = -1; 
+    var next = -1;
     users.map((user, index) => {
-        if(user.id === id) {
-            
-            if(index === users.length-1){                
+        if (user.id === id) {
+
+            if (index === users.length - 1) {
                 next = 0;
             } else {
                 next = index + 1
             }
-        }          
-    });    
-    
-    if(next >= 0) return users[next]; 
-    
+        }
+    });
+
+    if (next >= 0) return users[next];
 }
 
+//set the score
+function setScore(id, score) {
+    users.map((user) => {
+        if (user.id === id) {
+            user.score += score;
+        }
+    });
+}
+
+//get the score
+function getScore(room) {
+    return users.filter(user => user.room === room);
+}
+
+//set the timeout count
+function setTimeout(id, timeout) {
+    users.map((user) => {
+        if (user.id === id) {
+            user.timeout = timeout;
+        }
+    });
+}
+
+//get the timeout count
+function getTimeout(id) {
+    users.map((user) => {
+        if (user.id === id) {
+            return user.timeout;
+        }
+    });
+}
 module.exports = {
     userJoin,
     getCurrentUser,
     userLeave,
     getRoomUsers,
     updateUser,
-    getNextUser
+    getNextUser,
+    setScore,
+    getScore
 }

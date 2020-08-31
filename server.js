@@ -9,7 +9,7 @@ const io = socketio(server);
 
 const formatMessage = require('./utils/messages');
 const { wordJoin, clearWords } = require('./utils/words');
-const { userJoin, getCurrentUser, userLeave, getRoomUsers, updateUser, getNextUser } = require('./utils/users');
+const { userJoin, getCurrentUser, userLeave, getRoomUsers, updateUser, getNextUser, setScore, getScore } = require('./utils/users');
 
 //set static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
 
     //listen for chatMessage 
     socket.on('chatMessage', (msg) => {
-        console.log(msg);
+        // console.log(msg);
         const user = getCurrentUser(socket.id);
         wordJoin(msg);
         io.to(user.room).emit('message', formatMessage(user.username, msg));
@@ -71,6 +71,19 @@ io.on('connection', (socket) => {
         io.to(user.room).emit('timeoutRes', ({ username, msg: 'Timeout!!' }));
     });
 
+    socket.on("score", ({ username, count }) => {
+        const user = getCurrentUser(socket.id);
+
+
+        setScore(user.id, count);
+        let updatedUser = getScore(user.room);
+
+        io.to(user.room).emit('roomUsers', {
+            room: user.room,
+            users: getRoomUsers(user.room)
+        });
+    });
+
 
     socket.on("startTheGame", room => {
         let userArr = [];
@@ -80,7 +93,6 @@ io.on('connection', (socket) => {
             userArr[0].turn = true;
         }
 
-        console.log(userArr[0]);
 
         io.to(room).emit("nextUser", userArr[0]);
     });
@@ -93,18 +105,16 @@ io.on('connection', (socket) => {
         if (nextUser) {
             nextUser.turn = true;
         }
-
-
         // console.log("all", getRoomUsers(user.room));  
         io.to(user.room).emit("nextUser", nextUser);
     });
 
-    socket.on('typing', (data) => {
-        if (data.typing == true)
-            io.emit('display', data)
-        else
-            io.emit('display', data)
-    })
+    // socket.on('typing', (data) => {
+    //     if (data.typing == true)
+    //         io.emit('display', data)
+    //     else
+    //         io.emit('display', data)
+    // })
 
 
 

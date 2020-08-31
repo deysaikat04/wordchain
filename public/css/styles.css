@@ -431,6 +431,41 @@
   --webkit-transform: translate(-30px, -2px);
 }  */
 
+.score {
+  float: right;
+  font-weight: 600;
+}
+
+
+.typing p {
+  /* padding: 5px 15px;
+  background: #ccc;
+  border-radius: 25px; */
+  color: #000000;
+}
+
+.typing p:after{
+  position: relative;
+  content: ' ';
+  animation: animate 2s ease-in-out infinite;
+  
+}
+
+@keyframes animate {
+  0% {
+    content: ''
+  }
+  33% {
+    content: '.'
+  }
+  67% {
+    content: '..'
+  }
+  100% {
+    content: '...'
+  }
+}
+
 /* Footer */
 
 .footer {
