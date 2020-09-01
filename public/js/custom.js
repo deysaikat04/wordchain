@@ -93,9 +93,9 @@ socket.on('botMessage', message => {
 
 //first letter of words
 socket.on('msgLetter', data => {
-    // if(data.username !== username) {
-    //     document.getElementById('msg').value = data.msg;
-    // }
+    if (data.username !== username) {
+        document.getElementById('msg').value = data.msg;
+    }
 });
 
 //get the users and room details
@@ -263,7 +263,7 @@ function timedCount() {
     t = setTimeout(timedCount, 1000);
 
     if (count < 0) {
-        
+
         document.getElementById('msg').placeholder = "SORRY!! TIME OUT!!";
         document.getElementById('msg').focus();
 
