@@ -73,6 +73,7 @@ io.on('connection', (socket) => {
     });
 
 
+
     socket.on("startTheGame", room => {
         let userArr = [];
         userArr = getRoomUsers(room);
@@ -80,7 +81,6 @@ io.on('connection', (socket) => {
         if (userArr[0]) {
             userArr[0].turn = true;
         }
-
 
         io.to(room).emit("nextUser", userArr[0]);
     });
@@ -92,11 +92,11 @@ io.on('connection', (socket) => {
         let nextUser = getNextUser(currUser.id);
         if (nextUser) {
             nextUser.turn = true;
-        } 
+        }
         io.to(user.room).emit("nextUser", nextUser);
     });
 
-    
+
 
 
 
