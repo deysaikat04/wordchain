@@ -147,8 +147,6 @@ socket.on('roomUsers', ({ room, users }) => {
         <i class="material-icons">cancel</i>Leave</a>
         </li>
       `;
-
-
 });
 
 // chat form submit
@@ -191,7 +189,6 @@ socket.on("nextUser", data => {
             document.getElementById(`player${index + 1}`).classList.remove('player-active');
         }
     });
-
     setTurn();
 })
 
