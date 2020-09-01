@@ -46,6 +46,7 @@ function setStart() {
 function play() {
     document.getElementById("startBtn").style.display = 'none';
     document.getElementById('msg').disabled = false;
+    document.getElementById('msg').focus();
 
     document.getElementById("navbar").style.display = 'none';
     document.getElementById("scorebar").style.display = 'block';
@@ -87,8 +88,6 @@ socket.on('botMessage', message => {
     var seperator = document.createElement('br');
     document.querySelector('.chat-messages').appendChild(seperator);
 
-
-
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
 
@@ -98,7 +97,15 @@ socket.on('botMessage', message => {
 socket.on('msgLetter', data => {
     if (data.username !== username) {
         document.getElementById('msg').value = data.msg;
+        document.getElementById('msg').focus();
     }
+});
+
+socket.on('updatedScores', users => {
+    users.map((user, index) => {
+        document.getElementById(`player${index + 1}-name`).innerText = user.username;
+        document.getElementById(`player${index + 1}-score`).innerText = user.score;
+    });
 });
 
 //get the users and room details
@@ -109,7 +116,7 @@ socket.on('roomUsers', ({ room, users }) => {
     userArr.map((user) => {
         if (user.username === username) {
             user.turn = true;
-            myScore = user.score;
+
         }
         let name = user.username;
         timeoutCount[name] = 0;
@@ -177,8 +184,6 @@ socket.on("nextUser", data => {
     document.getElementById("scorebar").style.display = 'block';
 
     userArr.map((user, index) => {
-        document.getElementById(`player${index + 1}-name`).innerText = user.username;
-        document.getElementById(`player${index + 1}-score`).innerText = user.score;
 
         if (user.username == nextUser.username) {
             document.getElementById(`player${index + 1}`).classList.add('player-active');
@@ -191,8 +196,9 @@ socket.on("nextUser", data => {
 
 function setTurn() {
     if (nextUser.username === username) {
-        console.log("My turn");
+
         document.getElementById('msg').disabled = false;
+        document.getElementById('msg').focus();
         user_turn = nextUser.turn;
         startCount();
     }
@@ -202,7 +208,6 @@ function setTurn() {
 function outputMessage(message) {
 
     const div = document.createElement('div');
-
     if (message.username === username) {
 
         div.classList.add('message');
@@ -211,15 +216,13 @@ function outputMessage(message) {
             <div>   
                 <p class="meta">${message.username} </p>
                 <p class="chat-text">
-                    ${message.text} <span class="time">${count}s</span>
+                    ${message.text} 
                 </p>
             </div>
         `;
 
-        //send score      
-        socket.emit("score", { username, count });
-
-        stopCount();
+        //send score  
+        socket.emit("score", { username, myScore });
     }
     else {
         startCount();
@@ -229,7 +232,7 @@ function outputMessage(message) {
             <div>              
                 <p class="meta-sender">${message.username}</p>
                 <span class="chat-text-sender">
-                    ${message.text} <span class="time-sender">${count}s</span>
+                    ${message.text}
                 </p>
             </div>
         `;
@@ -315,6 +318,7 @@ function startCount() {
 function stopCount() {
     clearTimeout(t);
     timer_is_on = 0;
+    myScore = count;
     count = 9;
 }
 

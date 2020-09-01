@@ -61,15 +61,12 @@ io.on('connection', (socket) => {
         io.to(user.room).emit('timeoutRes', ({ username, msg: 'Timeout!!' }));
     });
 
-    socket.on("score", ({ count }) => {
+    socket.on("score", ({ myScore }) => {
         const user = getCurrentUser(socket.id);
 
-        setScore(user.id, count);
-
-        io.to(user.room).emit('roomUsers', {
-            room: user.room,
-            users: getRoomUsers(user.room)
-        });
+        setScore(user.id, myScore);
+        let userArr = getScore(user.room);
+        io.to(user.room).emit('updatedScores', userArr);
     });
 
 
