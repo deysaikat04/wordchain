@@ -93,10 +93,6 @@ io.on('connection', (socket) => {
         io.to(user.room).emit("nextUser", nextUser);
     });
 
-
-
-
-
     //runs when client disconnects
     socket.on('disconnect', () => {
         const user = userLeave(socket.id);
