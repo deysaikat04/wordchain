@@ -72,6 +72,13 @@ io.on('connection', (socket) => {
         });
     });
 
+    // socket.on('typing', (data) => {
+    //     if (data.typing == true)
+    //         io.emit('display', data)
+    //     else
+    //         io.emit('display', data)
+    // })
+
 
     socket.on("startTheGame", room => {
         let userArr = [];
@@ -92,11 +99,11 @@ io.on('connection', (socket) => {
         let nextUser = getNextUser(currUser.id);
         if (nextUser) {
             nextUser.turn = true;
-        } 
+        }
         io.to(user.room).emit("nextUser", nextUser);
     });
 
-    
+
 
 
 
