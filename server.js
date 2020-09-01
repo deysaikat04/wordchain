@@ -14,15 +14,7 @@ const { userJoin, getCurrentUser, userLeave, getRoomUsers, updateUser, getNextUs
 //set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// function ignoreFavicon(req, res, next) {
-//     if (req.originalUrl === '/favicon.ico') {
-//       res.status(204).json({nope: true});
-//     } else {
-//       next();
-//     }
-//   };
 
-//   app.use(ignoreFavicon);
 
 app.get('/favicon.ico', (req, res) => res.status(204));
 
@@ -31,9 +23,7 @@ const botName = 'WordChain Bot';
 io.on('connection', (socket) => {
 
     socket.on('joinRoom', ({ username, room }) => {
-        // const user = userJoin(socket.io, username, room);
         const user = userJoin(socket.id, username, room);
-
 
         socket.join(user.room);
 
@@ -71,12 +61,10 @@ io.on('connection', (socket) => {
         io.to(user.room).emit('timeoutRes', ({ username, msg: 'Timeout!!' }));
     });
 
-    socket.on("score", ({ username, count }) => {
+    socket.on("score", ({ count }) => {
         const user = getCurrentUser(socket.id);
 
-
         setScore(user.id, count);
-        let updatedUser = getScore(user.room);
 
         io.to(user.room).emit('roomUsers', {
             room: user.room,
@@ -104,19 +92,11 @@ io.on('connection', (socket) => {
         let nextUser = getNextUser(currUser.id);
         if (nextUser) {
             nextUser.turn = true;
-        }
-        // console.log("all", getRoomUsers(user.room));  
+        } 
         io.to(user.room).emit("nextUser", nextUser);
     });
 
-    // socket.on('typing', (data) => {
-    //     if (data.typing == true)
-    //         io.emit('display', data)
-    //     else
-    //         io.emit('display', data)
-    // })
-
-
+    
 
 
 

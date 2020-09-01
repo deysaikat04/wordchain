@@ -1,6 +1,6 @@
 var users = [];
 
-function userJoin(id, username, room, timeout, score) {
+function userJoin(id, username, room) {
     const user = { id, username, room, turn: false, timeout: 0, score: 0 };
 
     users.push(user);
@@ -37,7 +37,6 @@ function updateUser(id) {
 
 //get next user
 function getNextUser(id) {
-    // console.log("users", users);
     var next = -1;
     users.map((user, index) => {
         if (user.id === id) {

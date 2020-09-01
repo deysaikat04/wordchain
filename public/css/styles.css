@@ -430,6 +430,9 @@
   border-bottom-right-radius: 10px;
   --webkit-transform: translate(-30px, -2px);
 }  */
+input[type="text"]:disabled {
+  background: #383838;
+}
 
 .score {
   float: right;

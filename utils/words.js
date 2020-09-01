@@ -1,13 +1,13 @@
 let words = [];
 
-function wordJoin( word ) {
+function wordJoin(word) {
 
     words.push(word);
 
     return words;
 }
 
-function getWords( ) {
+function getWords() {
     return words;
 }
 

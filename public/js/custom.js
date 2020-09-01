@@ -34,7 +34,6 @@ const { username, room, token } = Qs.parse(location.search, {
 
 // Set the start button who creates the room
 function setStart() {
-    console.log(userArr);
     if (token === "true") {
         document.getElementById("startBtn").style.display = 'block';
     } else {
@@ -45,8 +44,7 @@ function setStart() {
 //start the game
 function play() {
     document.getElementById("startBtn").style.display = 'none';
-    // callTimer();
-    // startCount();
+    document.getElementById('msg').disabled = false;
     socket.emit("startTheGame", room);
 
     callInterval();
@@ -66,19 +64,13 @@ socket.on('message', message => {
 
 });
 
-//get next user
-socket.on("nextUser", data => {
-    nextUser = data;
-    document.getElementById("user-turn").innerText = `${nextUser.username}`;
-    setTurn();
-})
+
 
 // message from bot 
 socket.on('botMessage', message => {
     currUser = message.username;
 
     let i = Math.floor((Math.random() * 25));
-    console.log();
 
     const div = document.createElement('div');
 
@@ -88,33 +80,10 @@ socket.on('botMessage', message => {
         <p>${message.text}</p> 
     `;
 
-    // const div = document.createElement('div');
-    // div.classList.add('message-sender');
-    // div.innerHTML = 
-    // `
-    //     <div>              
-    //         <p class="meta-sender">${message.username} <span>${message.time}</span></p>
-    //         <span class="chat-text-sender">
-    //             ${message.text}
-    //         </p>
-    //     </div>
-    // `;     
-
     document.querySelector('.chat-messages').appendChild(div);
     var seperator = document.createElement('br');
     document.querySelector('.chat-messages').appendChild(seperator);
 
-
-    // const divTwo = document.createElement('div');
-
-    // divTwo.classList.add('timeout-msg');
-    // divTwo.innerHTML =
-    //     `        
-    //     <p>Let's begin with <span class="letter">'${alphabets[i]}'</span></p> 
-    // `;
-    // document.querySelector('.chat-messages').appendChild(divTwo);
-    // var seperatorTwo = document.createElement('br');
-    // document.querySelector('.chat-messages').appendChild(seperatorTwo);
 
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -131,8 +100,6 @@ socket.on('msgLetter', data => {
 
 //get the users and room details
 socket.on('roomUsers', ({ room, users }) => {
-
-    console.log(users);
 
     userArr = users;
 
@@ -181,6 +148,8 @@ chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
     if (user_turn) {
+        document.getElementById('msg').disabled = true;
+
         const msg = e.target.elements.msg.value;
 
         //Emit a message to server
@@ -190,48 +159,25 @@ chatForm.addEventListener('submit', (e) => {
 
         e.target.elements.msg.value = '';
         e.target.elements.msg.focus();
-        socket.emit("nextTurn", nextUser);
+
+        clearInterval();
+        callInterval();
+        stopCount();
     }
 
 });
 
-// user typing..
-// chatForm.addEventListener('keypress', (e) => {
 
-//     if (e.which != 13) {
-//         typing = true
-//         socket.emit('typing', { user: username, typing: true })
-//         clearTimeout(typingTimeout)
-//         timeout = setTimeout(typingTimeoutFun, 3000)
-//     } else {
-//         clearTimeout(timeout)
-//         typingTimeoutFun()
-//         //sendMessage() function will be called once the user hits enter
-//         // sendMessage()
-//     }
-
-// });
-
-// socket.on('display', (data) => {
-//     const div = document.createElement('div');
-//     div.classList.contains('typing') ? console.log("yes") :  console.log("no");
-
-//     if (data.typing == true) {
-//         div.classList.add('typing');
-//         div.innerHTML =
-//             `        
-//                 <p>${data.user}'s typing </p>
-//             `;
-//         document.querySelector('.chat-messages').appendChild(div);
-//     }
-//     else {
-//         document.querySelector('.chat-messages').removeChild(div);
-//     }
-
-// })
+//get next user
+socket.on("nextUser", data => {
+    nextUser = data;
+    document.getElementById("user-turn").innerText = `${nextUser.username}`;
+    setTurn();
+})
 
 function setTurn() {
     if (nextUser.username === username) {
+        document.getElementById('msg').disabled = false;
         user_turn = nextUser.turn;
         startCount();
     }
@@ -279,19 +225,12 @@ function outputMessage(message) {
     document.querySelector('.chat-messages').appendChild(seperator);
 }
 
-//get scores
-socket.on("updatedScore", (users) => {
-
-
-})
 
 //check word form list if it's already used
 function checkWord(msg) {
-    // console.log(wordArr.sort());
 
     let regex = /\s/;
     let found = binarySearch(wordArr.sort(), msg, 0, wordArr.length);
-    // console.log(found);
 
     if (found || msg.match(regex)) {
         document.getElementById('msg').style.border = '1px solid #f44336';
@@ -320,10 +259,11 @@ function callInterval() {
 function timedCount() {
     document.getElementById("timer").innerText = '0' + count;
     count = count - 1;
-    // console.log(count);    
+
     t = setTimeout(timedCount, 1000);
+
     if (count < 0) {
-        // document.getElementById('sendBtn').disabled = true;
+        
         document.getElementById('msg').placeholder = "SORRY!! TIME OUT!!";
         document.getElementById('msg').focus();
 
@@ -334,15 +274,8 @@ function timedCount() {
         if (timeoutCount[username] === MAX_TIMEOUT) {
             console.log("Game Over");
         }
-        // setTimeout(() => {
-        //     document.getElementById('sendBtn').disabled = false
-        // }, 5000);
 
         stopCount();
-        // setInterval(function() {
-        //     stopCount();
-        //     startCount(sec)
-        // }, sec);
     }
 }
 
