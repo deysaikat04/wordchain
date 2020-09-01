@@ -103,7 +103,6 @@ socket.on('msgLetter', data => {
 
 socket.on('updatedScores', users => {
     users.map((user, index) => {
-        document.getElementById(`player${index + 1}-name`).innerText = user.username;
         document.getElementById(`player${index + 1}-score`).innerText = user.score;
     });
 });
@@ -112,11 +111,11 @@ socket.on('updatedScores', users => {
 socket.on('roomUsers', ({ room, users }) => {
 
     userArr = users;
+    userArr.map((user, index) => {
 
-    userArr.map((user) => {
+        document.getElementById(`player${index + 1}-name`).innerText = user.username;
         if (user.username === username) {
             user.turn = true;
-
         }
         let name = user.username;
         timeoutCount[name] = 0;
@@ -176,7 +175,6 @@ chatForm.addEventListener('submit', (e) => {
 
 //get next user
 socket.on("nextUser", data => {
-    // console.log(userArr);
     nextUser = data;
     document.getElementById("user-turn").innerText = `${nextUser.username}`;
 
@@ -282,9 +280,7 @@ function timedCount() {
 
         timeoutCount[username] += 1;
 
-        if (timeoutCount[username] === MAX_TIMEOUT) {
-            console.log("Game Over");
-        }
+
         document.getElementById('msg').value = '';
         document.getElementById('msg').disabled = true;
 
