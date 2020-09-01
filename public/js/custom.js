@@ -1,6 +1,7 @@
 const socket = io();
 
 var wordArr = [];
+var msg;
 var alphabets = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 var currUser = '';
 var nextUser;
@@ -45,9 +46,11 @@ function setStart() {
 function play() {
     document.getElementById("startBtn").style.display = 'none';
     document.getElementById('msg').disabled = false;
-    socket.emit("startTheGame", room);
 
-    callInterval();
+    document.getElementById("navbar").style.display = 'none';
+    document.getElementById("scorebar").style.display = 'block';
+
+    socket.emit("startTheGame", room);
 }
 
 //Join chatroom
@@ -140,6 +143,8 @@ socket.on('roomUsers', ({ room, users }) => {
       `;
 
 
+
+
 });
 
 // chat form submit
@@ -150,7 +155,7 @@ chatForm.addEventListener('submit', (e) => {
     if (user_turn) {
         document.getElementById('msg').disabled = true;
 
-        const msg = e.target.elements.msg.value;
+        msg = e.target.elements.msg.value;
 
         //Emit a message to server
         socket.emit('chatMessage', msg);
@@ -159,9 +164,7 @@ chatForm.addEventListener('submit', (e) => {
 
         e.target.elements.msg.value = '';
         e.target.elements.msg.focus();
-
-        clearInterval();
-        callInterval();
+        socket.emit("nextTurn", nextUser);
         stopCount();
     }
 
@@ -170,13 +173,32 @@ chatForm.addEventListener('submit', (e) => {
 
 //get next user
 socket.on("nextUser", data => {
+    // console.log(userArr);
     nextUser = data;
     document.getElementById("user-turn").innerText = `${nextUser.username}`;
+
+    document.getElementById("navbar").style.display = 'none';
+    document.getElementById("scorebar").style.display = 'block';
+
+    userArr.map((user, index) => {
+        document.getElementById(`player${index + 1}-name`).innerText = user.username;
+        document.getElementById(`player${index + 1}-score`).innerText = user.score;
+
+        if (user.username == nextUser.username) {
+            document.getElementById(`player${index + 1}`).classList.add('player-active');
+        } else {
+            document.getElementById(`player${index + 1}`).classList.remove('player-active');
+        }
+    });
+
+
+
     setTurn();
 })
 
 function setTurn() {
     if (nextUser.username === username) {
+        console.log("My turn");
         document.getElementById('msg').disabled = false;
         user_turn = nextUser.turn;
         startCount();
@@ -249,13 +271,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-
-function callInterval() {
-    setInterval(function () {
-        socket.emit("nextTurn", nextUser);
-    }, MAX_WAITING);
-}
-
 function timedCount() {
     document.getElementById("timer").innerText = '0' + count;
     count = count - 1;
@@ -274,12 +289,16 @@ function timedCount() {
         if (timeoutCount[username] === MAX_TIMEOUT) {
             console.log("Game Over");
         }
+        document.getElementById('msg').value = '';
+        document.getElementById('msg').disabled = true;
+
+        socket.emit("nextTurn", nextUser);
 
         stopCount();
     }
 }
 
-// timeout message
+// timeout message 
 socket.on("timeoutRes", response => {
 
     const div = document.createElement('div');
