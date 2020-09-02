@@ -17,7 +17,16 @@
   .mt-40{
     margin-top: 40px;
   }
-  
+  .text-center{
+    text-align: center !important;
+  }
+  .text-highlight{
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .modal{
+    top: 25% !important;
+  }
   .error-text {
     color: var(--error-color);
     font-size: 12px;
@@ -29,6 +38,7 @@
     /* background: var(--primary); */
     /* border-bottom: 10px solid var(--secondary); */
     background-color: #ffffff !important;
+    box-shadow: 10px ;
     position: fixed;
     top: 0;
     z-index: 999;
@@ -507,7 +517,7 @@ input[type="text"]:disabled {
   
 }
 
-.score-board p {
+.score-board p, .winner-board p {
   margin: 10px 0 0 0;
 }
 
@@ -520,4 +530,24 @@ input[type="text"]:disabled {
   height: 65px;
   transition: 1s ease-in-out;
   background-color: #1501dc2e;
+}
+.countdown{
+  color: #ffffff;
+  letter-spacing: 2px;
+  font-size: 18px;
+  background-color: #726cb8;
+  background-image: linear-gradient(60deg, #ff4d40 , #fb997a);
+  box-shadow: 0px 4px 15px 1px #ffa099;
+  transform: translateY(-140%);
+  padding: 5px;
+  border-radius: 15px;
+  
+}
+.winner-board{
+  display: block;
+  background-image: linear-gradient(-260deg, #3393c1, #78df9a);
+  box-shadow: 0px 4px 15px 1px #97f1b5;
+  height: 65px;
+  text-align: center;  
+  margin-top: 16px;
 }

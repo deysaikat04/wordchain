@@ -24,7 +24,7 @@
 
 <body>
   <!-- top nav -->
-  <nav class="z-depth-0">
+  <nav>
     <div class="nav-wrapper container">
       <a href="/" class="brand">Word<span>Chain</span></a>
       <span class="white-text text-darken-1">
@@ -59,7 +59,7 @@
   </ul>
 
   <main>
-    <div class="recipes container grey-text text-darken-1 mt-40">
+    <div class="container grey-text text-darken-1 mt-40">
       <div class="card-panel recipe white row">
         <div class="recipe-details">
           <div class="center">
@@ -70,18 +70,35 @@
             <div id="createRoom">
               <form class="col s12" action="play.html" id="create-form">
                 <div class="row">
+
                   <div class="input-field col s12">
                     <input placeholder="Username" id="username" name="username" type="text" class="validate" reqiured
-                      autocomplete="off" onkeyup="validateUsername()" />
-                    <span class="helper-text">It will be your name for the game.</span>
+                      maxlength="5" autocomplete="off" onkeyup="validateUsername()" />
+                    <span class="helper-text">It will be your name for the game.(Max 5 characters)</span>
                   </div>
                   <span class="error-text" id="error"></span>
+
+                  <div class="input-field col s12">
+                    <select class="browser-default" id="gameTimer" onchange="validateGameTimer()" name="gameTime">
+                      <option value="" disabled selected>How long do you want to play</option>
+                      <option value="1">1 min</option>
+                      <option value="3">3 min</option>
+                      <option value="5">5 min</option>
+                      <option value="8">8 min</option>
+                      <option value="10">10 min</option>
+                    </select>
+                    <span class="helper-text">It will be the time span of your game.</span>
+                  </div>
+
+                  <span class="error-text" id="error-timer"></span>
 
                   <div class="input-field col s12 roomcode-field">
                     <input id="code" name="room" type="text" class="validate" placeholder="Room code"
                       aria-required="true" reqiured readonly="readonly" />
                     <span class="helper-text">Room code will generate automatically..</span>
                   </div>
+
+
 
                   <input type="hidden" name="token" value="true" />
 
@@ -92,9 +109,9 @@
                   </div>
 
 
-                  <div class="input-field col s12 center" id="submitBtn">
-                    <button class="btn waves-effect waves-light btn-small" id="btnCreate" type="submit"
-                      title="Hello World!" disabled>
+                  <div class="input-field col s12 center" id="createBtn">
+                    <button class="btn waves-effect waves-light btn-small" id="btnCreate" type="submit" title="Create"
+                      disabled>
                       Create
                     </button>
                   </div>
@@ -115,16 +132,18 @@
           <form class="col s12" action="play.html">
             <div class="row">
               <div class="input-field col s12">
-                <input placeholder="Username" id="username" name="username" type="text" class="validate"
+                <input placeholder="Username" id="username" name="username" type="text" class="validate" maxLength="5"
                   autocomplete="off" reqiured />
-                <span class="helper-text">It will be your name for the game.</span>
+                <span class="helper-text">It will be your name for the game.(Max 5 characters)</span>
               </div>
 
               <div class="input-field col s12 roomcode-field">
                 <input id="code" name="room" type="number" class="validate" placeholder="Room code: 1234"
                   onkeyup="checkIfRoomExists()" autocomplete="off" reqiured />
-                <span class="helper-text">This is the room code that has aalready been created.</span>
+                <span class="helper-text">This is the room code that has already been created.</span>
               </div>
+
+
 
               <input type="hidden" name="token" value="false" />
 
@@ -140,7 +159,7 @@
       </div>
 
       <div class="footer center">
-        <p>Crafted with love &#10084; by Saikat Dey.</p>
+        <p>Crafted with &#10084; by Saikat Dey.</p>
         <ul class="socials">
           <li>
             <a href="https://github.com/deysaikat04" target="_blank" rel="noopener noreferrer">
