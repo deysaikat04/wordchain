@@ -21,7 +21,7 @@
 </head>
 
 <body onload="setStart()">
-  <nav class="z-depth-0" id="navbar">
+  <nav id="navbar">
     <div class="nav-wrapper container">
       <a href="javascript:void(0);" class="brand">Word<span>Chain</span></a>
       <span class="white-text text-darken-1">
@@ -54,6 +54,15 @@
           </div>
         </div>
       </div>
+
+      <div class="col s12">
+        <div class="col s4 offset-s4 text-center">
+          <div class="countdown">
+            <span id="countdown"></span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -66,16 +75,50 @@
 
       </div>
     </main>
-    <div class="chat-form-container col s12">
-      <span class="timer" id="timer">10</span>
-      <form id="chat-form" name="chatForm">
-        <input id="msg" name="msg" class="chat-input col s8" type="text" placeholder="Enter Message"
-          onkeyup="checkWord(chatForm.msg.value)" required autocomplete="off" disabled />
-        <button class="col s4 btn-floating btn-large waves-effect waves-light matcolor" type="submit" id="sendBtn">
-          <i class="material-icons right">send</i>
-        </button>
-      </form>
+
+    <!-- Modal Less User -->
+    <div id="lessUser" class="modal">
+      <div class="modal-content text-center">
+        <h5>Sorry!</h5>
+        <p>To start the game there must be atleast <span class="text-highlight">two</span> players.</p>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">OK</a>
+      </div>
     </div>
+
+
+
+
+    <!-- Game time ends -->
+    <div id="gameOver" class="modal">
+      <div class="modal-content text-center">
+        <h5 class="text-highlight">Time's up!</h5>
+        <p>Score Board</p>
+        <div class="col s12 winner-board">
+          <div class="row scores">
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Play Again</a>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="chat-form-container col s12">
+    <span class="timer" id="timer">10</span>
+    <form id="chat-form" name="chatForm">
+      <input id="msg" name="msg" class="chat-input col s8" type="text" placeholder="Enter Message"
+        onkeyup="checkWord(chatForm.msg.value)" required autocomplete="off" disabled />
+      <button class="col s4 btn-floating btn-large waves-effect waves-light matcolor" type="submit" id="sendBtn">
+        <i class="material-icons right">send</i>
+      </button>
+    </form>
+  </div>
   </div>
 
 

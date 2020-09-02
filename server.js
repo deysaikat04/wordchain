@@ -9,8 +9,10 @@ const io = socketio(server);
 
 const formatMessage = require('./utils/messages');
 const { wordJoin, clearWords } = require('./utils/words');
+const { startTimer } = require('./utils/timer');
 const { userJoin, getCurrentUser, userLeave, getRoomUsers, updateUser, getNextUser, setScore, getScore } = require('./utils/users');
 
+var totalTime;
 //set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -19,6 +21,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/favicon.ico', (req, res) => res.status(204));
 
 const botName = 'WordChain Bot';
+
+
 //Run when client connects
 io.on('connection', (socket) => {
 
@@ -71,7 +75,9 @@ io.on('connection', (socket) => {
 
 
 
-    socket.on("startTheGame", room => {
+    socket.on("startTheGame", ({ room, gameTime }) => {
+        totalTime = gameTime;
+
         let userArr = [];
         userArr = getRoomUsers(room);
 
@@ -81,6 +87,23 @@ io.on('connection', (socket) => {
 
         io.to(room).emit("nextUser", userArr[0]);
     });
+
+    socket.on("gameTimeSpan", room => {
+        data = totalTime + ":" + 00;
+
+
+        setInterval(() => {
+            if (data != -1) {
+                data = startTimer(data);
+                console.log(data);
+                data != '-1' ? io.to(room).emit("countdown", data) : null;
+            } else {
+                clearInterval();
+            }
+        }, 1000);
+    });
+
+
 
     socket.on("nextTurn", currUser => {
         const user = getCurrentUser(currUser.id);

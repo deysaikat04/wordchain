@@ -13,6 +13,7 @@ var MAX_TIMEOUT = 3;
 
 var user_turn = false;
 var userArr = [];
+var noOfUsers;
 
 var timeoutCount = {};
 var myScore = 0;
@@ -29,12 +30,13 @@ const userList = document.getElementById('side-menu');
 var userCount = 0;
 
 // Get username and room
-const { username, room, token } = Qs.parse(location.search, {
+const { username, room, token, gameTime } = Qs.parse(location.search, {
     ignoreQueryPrefix: true
 });
 
 // Set the start button who creates the room
 function setStart() {
+
     if (token === "true") {
         document.getElementById("startBtn").style.display = 'block';
     } else {
@@ -44,15 +46,54 @@ function setStart() {
 
 //start the game
 function play() {
-    document.getElementById("startBtn").style.display = 'none';
-    document.getElementById('msg').disabled = false;
-    document.getElementById('msg').focus();
+    if (noOfUsers > 1) {
 
-    document.getElementById("navbar").style.display = 'none';
-    document.getElementById("scorebar").style.display = 'block';
+        document.getElementById("startBtn").style.display = 'none';
+        document.getElementById('msg').disabled = false;
+        document.getElementById('msg').focus();
 
-    socket.emit("startTheGame", room);
+        document.getElementById("navbar").style.display = 'none';
+        document.getElementById("scorebar").style.display = 'block';
+
+        document.getElementById("startBtn").removeAttribute("data-target");
+        document.getElementById("startBtn").classList.remove("modal-trigger");
+
+        socket.emit("startTheGame", { room, gameTime });
+        socket.emit("gameTimeSpan", room);
+    } else {
+
+        document.getElementById("startBtn").setAttribute("data-target", "lessUser");
+        document.getElementById("startBtn").classList.add("modal-trigger");
+    }
 }
+
+socket.on("countdown", data => {
+
+    document.getElementById("countdown").innerText = data;
+    if (data == '0:00') {
+        stopCount();
+        document.getElementById('msg').disabled = true;
+
+        const elem = document.getElementById('gameOver');
+        const instance = M.Modal.init(elem, { dismissible: false });
+        instance.open();
+
+        userArr.map((user, index) => {
+            const div = document.createElement('div');
+
+            div.innerHTML =
+                `
+                <div class="col s6" >
+                    <p>${user.username}</p>
+                    <span>${user.score}</span>
+                </div>
+            `;
+
+            document.querySelector('.scores').appendChild(div);
+        });
+    }
+});
+
 
 //Join chatroom
 socket.emit('joinRoom', { username, room });
@@ -102,6 +143,7 @@ socket.on('msgLetter', data => {
 });
 
 socket.on('updatedScores', users => {
+    userArr = users;
     users.map((user, index) => {
         document.getElementById(`player${index + 1}-score`).innerText = user.score;
     });
@@ -111,6 +153,8 @@ socket.on('updatedScores', users => {
 socket.on('roomUsers', ({ room, users }) => {
 
     userArr = users;
+    noOfUsers = users.length;
+
     userArr.map((user, index) => {
 
         document.getElementById(`player${index + 1}-name`).innerText = user.username;
@@ -173,8 +217,10 @@ chatForm.addEventListener('submit', (e) => {
 });
 
 
+
 //get next user
 socket.on("nextUser", data => {
+    console.log();
     nextUser = data;
     document.getElementById("user-turn").innerText = `${nextUser.username}`;
 
@@ -261,6 +307,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // nav menu
     const menus = document.querySelectorAll('.side-menu');
     M.Sidenav.init(menus, { edge: 'left' });
+
+    var elems = document.querySelectorAll('.modal');
+    M.Modal.init(elems);
+
 
 });
 
