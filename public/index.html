@@ -132,23 +132,25 @@
           <form class="col s12" action="play.html">
             <div class="row">
               <div class="input-field col s12">
-                <input placeholder="Username" id="username" name="username" type="text" class="validate" maxLength="5"
-                  autocomplete="off" reqiured />
+                <input placeholder="Username" id="usernameGo" name="username" type="text" class="validate" maxLength="5"
+                  onkeyup="validateUserAddRoom()" autocomplete="off" reqiured />
                 <span class="helper-text">It will be your name for the game.(Max 5 characters)</span>
               </div>
+              <span class="error-text" id="error-usernameGo"></span>
 
               <div class="input-field col s12 roomcode-field">
-                <input id="code" name="room" type="number" class="validate" placeholder="Room code: 1234"
+                <input name="room" type="number" class="validate" placeholder="Room code: 1234" id="roomGoCode"
                   onkeyup="checkIfRoomExists()" autocomplete="off" reqiured />
                 <span class="helper-text">This is the room code that has already been created.</span>
               </div>
-
+              <span class="error-text" id="error-roomGo"></span>
 
 
               <input type="hidden" name="token" value="false" />
 
               <div class="input-field col s12 center">
-                <button class="btn waves-effect waves-light btn-small" type="submit">
+                <button class="btn waves-effect waves-light btn-small" type="submit" id="btnGo" disabled
+                onclick="check()">
                   Go
                 </button>
               </div>

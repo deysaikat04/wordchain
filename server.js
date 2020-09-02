@@ -10,7 +10,7 @@ const io = socketio(server);
 const formatMessage = require('./utils/messages');
 const { wordJoin, clearWords } = require('./utils/words');
 const { startTimer } = require('./utils/timer');
-const { userJoin, getCurrentUser, userLeave, getRoomUsers, updateUser, getNextUser, setScore, getScore } = require('./utils/users');
+const { userJoin, getCurrentUser, userLeave, getRoomUsers, updateUser, getNextUser, setScore, getScore, setTimeout } = require('./utils/users');
 
 var totalTime;
 //set static folder
@@ -60,8 +60,13 @@ io.on('connection', (socket) => {
         io.to(user.room).emit('msgLetter', { username, msg });
     });
 
-    socket.on("timeout", (username) => {
+    socket.on("timeout", ({ username, myTimeout }) => {
         const user = getCurrentUser(socket.id);
+
+        setTimeout(user.id, myTimeout);
+        let userArr = getScore(user.room);
+
+        io.to(user.room).emit('updatedScores', userArr);
         io.to(user.room).emit('timeoutRes', ({ username, msg: 'Timeout!!' }));
     });
 
@@ -95,7 +100,6 @@ io.on('connection', (socket) => {
         setInterval(() => {
             if (data != -1) {
                 data = startTimer(data);
-                console.log(data);
                 data != '-1' ? io.to(room).emit("countdown", data) : null;
             } else {
                 clearInterval();

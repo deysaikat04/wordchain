@@ -50,7 +50,32 @@ function validateUsername() {
     }
 }
 
-function checkIfRoomExists() {
-    console.log("hola");
+function validateUserAddRoom() {
+
+    if (document.getElementById('usernameGo').value === '') {
+        document.getElementById('error-usernameGo').innerText = "Please enter any username!";
+        document.getElementById("btnGo").disabled = true;
+    } else {
+        document.getElementById('error-usernameGo').innerText = "";
+        document.getElementById("btnGo").disabled = false;
+    }
 }
 
+function checkIfRoomExists() {
+
+    if (document.getElementById('roomGoCode').value === '') {
+        document.getElementById('error-roomGo').innerText = "Please enter valid room code!";
+        document.getElementById("btnGo").disabled = true;
+    } else {
+        document.getElementById('error-roomGo').innerText = "";
+        document.getElementById("btnGo").disabled = false;
+    }
+}
+
+function check() {
+    if (document.getElementById('usernameGo').value === '' || document.getElementById('roomGoCode').value === '') {
+        document.getElementById("btnGo").disabled = true;
+    } else {
+        document.getElementById("btnGo").disabled = false;
+    }
+}
