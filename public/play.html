@@ -113,8 +113,9 @@
     <span class="timer" id="timer">10</span>
     <form id="chat-form" name="chatForm">
       <input id="msg" name="msg" class="chat-input col s8" type="text" placeholder="Enter Message"
-        onkeyup="checkWord(chatForm.msg.value)" required autocomplete="off" disabled />
-      <button class="col s4 btn-floating btn-large waves-effect waves-light matcolor" type="submit" id="sendBtn">
+        onkeyup="checkWord(chatForm.msg.value)" required autocomplete="off" />
+      <button class="col s4 btn-floating btn-large waves-effect waves-light matcolor" type="submit" id="sendBtn"
+        disabled>
         <i class="material-icons right">send</i>
       </button>
     </form>

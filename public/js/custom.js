@@ -17,6 +17,7 @@ var noOfUsers;
 
 var timeoutCount = {};
 var myScore = 0;
+var myTimeout = 0;
 
 //typing
 var typing = false;
@@ -49,7 +50,7 @@ function play() {
     if (noOfUsers > 1) {
 
         document.getElementById("startBtn").style.display = 'none';
-        document.getElementById('msg').disabled = false;
+        document.getElementById('sendBtn').disabled = true;
         document.getElementById('msg').focus();
 
         document.getElementById("navbar").style.display = 'none';
@@ -72,7 +73,7 @@ socket.on("countdown", data => {
     document.getElementById("countdown").innerText = data;
     if (data == '0:00') {
         stopCount();
-        document.getElementById('msg').disabled = true;
+        document.getElementById('sendBtn').disabled = true;
 
         const elem = document.getElementById('gameOver');
         const instance = M.Modal.init(elem, { dismissible: false });
@@ -199,7 +200,7 @@ chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
     if (user_turn) {
-        document.getElementById('msg').disabled = true;
+        document.getElementById('sendBtn').disabled = true;
 
         msg = e.target.elements.msg.value;
 
@@ -211,7 +212,10 @@ chatForm.addEventListener('submit', (e) => {
         e.target.elements.msg.value = '';
         e.target.elements.msg.focus();
         socket.emit("nextTurn", nextUser);
+
+        user_turn = false;
         stopCount();
+
     }
 
 });
@@ -220,7 +224,6 @@ chatForm.addEventListener('submit', (e) => {
 
 //get next user
 socket.on("nextUser", data => {
-    console.log();
     nextUser = data;
     document.getElementById("user-turn").innerText = `${nextUser.username}`;
 
@@ -241,7 +244,7 @@ socket.on("nextUser", data => {
 function setTurn() {
     if (nextUser.username === username) {
 
-        document.getElementById('msg').disabled = false;
+        document.getElementById('sendBtn').disabled = false;
         document.getElementById('msg').focus();
         user_turn = nextUser.turn;
         startCount();
@@ -294,12 +297,14 @@ function checkWord(msg) {
     let regex = /\s/;
     let found = binarySearch(wordArr.sort(), msg, 0, wordArr.length);
 
-    if (found || msg.match(regex)) {
-        document.getElementById('msg').style.border = '1px solid #f44336';
-        document.getElementById('sendBtn').disabled = true;
-    } else {
-        document.getElementById('msg').style.border = '1px solid #ffffff';
-        document.getElementById('sendBtn').disabled = false;
+    if (user_turn) {
+        if (found || msg.match(regex)) {
+            document.getElementById('msg').style.border = '1px solid #f44336';
+            document.getElementById('sendBtn').disabled = true;
+        } else {
+            document.getElementById('msg').style.border = '1px solid #ffffff';
+            document.getElementById('sendBtn').disabled = false;
+        }
     }
 }
 
@@ -326,13 +331,14 @@ function timedCount() {
         document.getElementById('msg').placeholder = "SORRY!! TIME OUT!!";
         document.getElementById('msg').focus();
 
-        socket.emit("timeout", username);
 
-        timeoutCount[username] += 1;
+        // timeoutCount[username] += 1;
 
+        myTimeout += 1;
+        socket.emit("timeout", { username, myTimeout });
 
         document.getElementById('msg').value = '';
-        document.getElementById('msg').disabled = true;
+        document.getElementById('sendBtn').disabled = true;
 
         socket.emit("nextTurn", nextUser);
 
@@ -353,6 +359,7 @@ socket.on("timeoutRes", response => {
     document.querySelector('.chat-messages').appendChild(div);
     if (response.username !== username) startCount();
 });
+
 
 function startCount() {
     if (!timer_is_on) {

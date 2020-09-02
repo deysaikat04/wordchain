@@ -1,4 +1,5 @@
 var users = [];
+const TIMEOUT_SCORE_DEDUCT = 10;
 
 function userJoin(id, username, room) {
     const user = { id, username, room, turn: false, timeout: 0, score: 0 };
@@ -70,19 +71,15 @@ function getScore(room) {
 function setTimeout(id, timeout) {
     users.map((user) => {
         if (user.id === id) {
-            user.timeout = timeout;
+            user.timeout += timeout;
+            user.score -= TIMEOUT_SCORE_DEDUCT;
         }
     });
+
+    // console.log(users);
 }
 
-//get the timeout count
-function getTimeout(id) {
-    users.map((user) => {
-        if (user.id === id) {
-            return user.timeout;
-        }
-    });
-}
+
 module.exports = {
     userJoin,
     getCurrentUser,
@@ -91,5 +88,6 @@ module.exports = {
     updateUser,
     getNextUser,
     setScore,
-    getScore
+    getScore,
+    setTimeout
 }
