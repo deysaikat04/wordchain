@@ -213,7 +213,7 @@ chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
     if (user_turn) {
-        
+
         stopCount();
 
         document.getElementById('sendBtn').disabled = true;
@@ -241,7 +241,6 @@ chatForm.addEventListener('submit', (e) => {
 //get next user
 socket.on("nextUser", data => {
     nextUser = data;
-
     document.getElementById("navbar").style.display = 'none';
     document.getElementById("scorebar").style.display = 'block';
 
@@ -253,20 +252,18 @@ socket.on("nextUser", data => {
             document.getElementById(`player${index + 1}`).classList.remove('player-active');
         }
     });
-    setTurn();
-})
 
-function setTurn() {
-    console.log(nextUser.username, username);
-    if (nextUser.username === username) {
-        console.log("MY TURN");
+    if (data.username === username) {
+        // console.log("MY TURN ", username);
         document.getElementById('sendBtn').disabled = false;
         document.getElementById('msg').focus();
 
-        user_turn = nextUser.turn;
+        user_turn = data.turn;
         startCount();
     }
-}
+})
+
+
 
 //output message to DOM
 function outputMessage(message) {
@@ -289,7 +286,7 @@ function outputMessage(message) {
         socket.emit("score", { username, myScore });
     }
     else {
-        startCount();
+        // startCount();
         div.classList.add('message-sender');
         div.innerHTML =
             `
@@ -356,6 +353,7 @@ function timedCount() {
         document.getElementById('msg').value = '';
         document.getElementById('sendBtn').disabled = true;
 
+        user_turn = false;
         socket.emit("nextTurn", nextUser);
 
         stopCount();
@@ -374,7 +372,7 @@ socket.on("timeoutRes", response => {
         <p>${response.username + ' ' + response.msg} </p>
     `;
     document.querySelector('.chat-messages').appendChild(div);
-    if (response.username !== username) startCount();
+    // if (response.username !== username) startCount();
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
