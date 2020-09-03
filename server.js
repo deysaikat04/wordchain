@@ -111,18 +111,21 @@ io.on('connection', (socket) => {
 
     socket.on("nextTurn", currUser => {
         const user = getCurrentUser(currUser.id);
+
         updateUser(currUser.id);
 
         let nextUser = getNextUser(currUser.id);
+
         if (nextUser) {
             nextUser.turn = true;
         }
         io.to(user.room).emit("nextUser", nextUser);
+
     });
 
     //runs when client disconnects
     socket.on('disconnect', () => {
-        const user = userLeave(socket.id);
+        const user = userLeave(socket.id); 
 
         if (user) {
             io

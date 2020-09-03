@@ -47,9 +47,8 @@
     text-transform: uppercase;
     /* color: #5431dc; */
     background: -webkit-linear-gradient(-260deg, #2f68f6, #38b16b);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-    
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;    
     margin-left: 5px;
   }
   nav a span{
@@ -57,6 +56,12 @@
   }
   nav .sidenav-trigger{
     margin: 0;
+  }
+
+  .nav-roomCode {
+    color: #aaaaaa;
+    text-align: center;
+    margin: 0 0 0 4px;
   }
 
  .theme-color {
@@ -521,7 +526,8 @@
   margin: 10px 0 0 0;
 }
 
-#player1-score, #player2-score {
+#player1-score, #player2-score,
+#player3-score, #player4-score {
   font-size: 18px;
   font-weight: 500;
 }
@@ -537,8 +543,8 @@
   font-size: 18px;
   background-color: #726cb8;
   background-image: linear-gradient(60deg, #ff4d40 , #fb997a);
-  box-shadow: 0px 4px 15px 1px #ffa099;
-  transform: translateY(-140%);
+  box-shadow: 0px 2px 10px 1px #ffa099;
+  /* transform: translateY(-10%); */
   padding: 5px;
   border-radius: 15px;
   
