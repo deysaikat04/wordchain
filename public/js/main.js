@@ -11,6 +11,7 @@ const createForm = document.getElementById('create-form');
 function generateRoomCode() {
 
     validateGameTimer();
+    validateUsername();
 
     var val = Math.floor(1000 + Math.random() * 9000);
 
@@ -78,4 +79,18 @@ function check() {
     } else {
         document.getElementById("btnGo").disabled = false;
     }
+}
+
+function copyCode() {
+    var copyText = document.getElementById("code");
+
+    /* Select the text field */
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+    /* Copy the text inside the text field */
+    document.execCommand("copy");
+
+    /* Alert the copied text */
+    console.log(copyText.value);
 }

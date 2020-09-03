@@ -37,6 +37,7 @@ const { username, room, token, gameTime } = Qs.parse(location.search, {
 
 // Set the start button who creates the room
 function setStart() {
+    document.getElementById('rommCode').innerHTML = `Room: ${room}`;
 
     if (token === "true") {
         document.getElementById("startBtn").style.display = 'block';
@@ -138,7 +139,7 @@ socket.on('botMessage', message => {
 //first letter of words
 socket.on('msgLetter', data => {
     if (data.username !== username) {
-        document.getElementById('msg').value = data.msg;
+        document.getElementById('msg').placeholder = `Start with: ${data.msg}`;
         document.getElementById('msg').focus();
     }
 });
@@ -147,6 +148,7 @@ socket.on('updatedScores', users => {
     userArr = users;
     users.map((user, index) => {
         document.getElementById(`player${index + 1}-score`).innerText = user.score;
+        // createScoreBoard(index, user.name, user.score);
     });
 });
 
@@ -156,9 +158,14 @@ socket.on('roomUsers', ({ room, users }) => {
     userArr = users;
     noOfUsers = users.length;
 
-    userArr.map((user, index) => {
+    document.querySelector('.scorerow').innerHTML = "";
 
-        document.getElementById(`player${index + 1}-name`).innerText = user.username;
+    userArr.map((user, index) => {
+        if (noOfUsers > 1) {
+            createScoreBoard(index, user.username, user.score);
+        }
+
+        // document.getElementById(`player${index + 1}-name`).innerText = user.username;
         if (user.username === username) {
             user.turn = true;
         }
@@ -194,16 +201,25 @@ socket.on('roomUsers', ({ room, users }) => {
       `;
 });
 
+// function fetchWord(msg) {
+//     fetch(`https://api.datamuse.com/words?rel_gen=${msg}`)
+//         .then(response => response.json())
+//         .then(data => console.log(data));
+// }
+
 // chat form submit
 chatForm.addEventListener('submit', (e) => {
 
     e.preventDefault();
 
     if (user_turn) {
+        
+        stopCount();
+
         document.getElementById('sendBtn').disabled = true;
 
         msg = e.target.elements.msg.value;
-
+        // fetchWord(msg);
         //Emit a message to server
         socket.emit('chatMessage', msg);
 
@@ -214,7 +230,7 @@ chatForm.addEventListener('submit', (e) => {
         socket.emit("nextTurn", nextUser);
 
         user_turn = false;
-        stopCount();
+
 
     }
 
@@ -225,7 +241,6 @@ chatForm.addEventListener('submit', (e) => {
 //get next user
 socket.on("nextUser", data => {
     nextUser = data;
-    document.getElementById("user-turn").innerText = `${nextUser.username}`;
 
     document.getElementById("navbar").style.display = 'none';
     document.getElementById("scorebar").style.display = 'block';
@@ -242,10 +257,12 @@ socket.on("nextUser", data => {
 })
 
 function setTurn() {
+    console.log(nextUser.username, username);
     if (nextUser.username === username) {
-
+        console.log("MY TURN");
         document.getElementById('sendBtn').disabled = false;
         document.getElementById('msg').focus();
+
         user_turn = nextUser.turn;
         startCount();
     }
@@ -293,9 +310,11 @@ function outputMessage(message) {
 
 //check word form list if it's already used
 function checkWord(msg) {
-
+    // https://api.datamuse.com/words?rel_gen=kkiss
     let regex = /\s/;
     let found = binarySearch(wordArr.sort(), msg, 0, wordArr.length);
+
+
 
     if (user_turn) {
         if (found || msg.match(regex)) {
@@ -331,9 +350,6 @@ function timedCount() {
         document.getElementById('msg').placeholder = "SORRY!! TIME OUT!!";
         document.getElementById('msg').focus();
 
-
-        // timeoutCount[username] += 1;
-
         myTimeout += 1;
         socket.emit("timeout", { username, myTimeout });
 
@@ -349,6 +365,7 @@ function timedCount() {
 // timeout message 
 socket.on("timeoutRes", response => {
 
+    document.getElementById('sendBtn').disabled = true;
     const div = document.createElement('div');
 
     div.classList.add('timeout-msg');
@@ -358,6 +375,9 @@ socket.on("timeoutRes", response => {
     `;
     document.querySelector('.chat-messages').appendChild(div);
     if (response.username !== username) startCount();
+
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
 });
 
 
@@ -391,3 +411,32 @@ function binarySearch(arr, element, start, end) {
 }
 
 
+function createScoreBoard(i, name, score) {
+    var grid = 0;
+    switch (noOfUsers) {
+        case 2: {
+            grid = 6;
+            break;
+        }
+        case 3: {
+            grid = 4;
+            break;
+        }
+        default: {
+            grid = 3;
+            break;
+        }
+    }
+    if (document.getElementById('scoreboard').childNodes.length <= userArr.length) {
+
+        const div = document.createElement('div');
+        div.innerHTML =
+            `
+        <div class="col s${grid}" id="player${i + 1}">
+        <p id="player${i + 1}-name">${name}</p>
+        <span id="player${i + 1}-score">${score}</span>
+        </div>
+        `;
+        document.querySelector('.scorerow').appendChild(div);
+    }
+}
