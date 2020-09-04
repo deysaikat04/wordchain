@@ -316,6 +316,7 @@ function outputMessage(message) {
         if (index == myIndex) {
             chatColor = 'message';
             //send score  
+            myScore += msg.length;
             socket.emit("score", { username, myScore });
         } else {
             otherPlayersArr.push(user.username);
