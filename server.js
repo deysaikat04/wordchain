@@ -75,6 +75,8 @@ io.on('connection', (socket) => {
 
         setScore(user.id, myScore);
         let userArr = getScore(user.room);
+
+        console.log(userArr);
         io.to(user.room).emit('updatedScores', userArr);
     });
 

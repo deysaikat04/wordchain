@@ -275,6 +275,8 @@ chatForm.addEventListener('submit', (e) => {
 
 
     }
+    //send score  
+    socket.emit("score", { myScore });
 
 });
 
@@ -315,9 +317,7 @@ function outputMessage(message) {
     userArr.map((user, index) => {
         if (index == myIndex) {
             chatColor = 'message';
-            //send score  
-            myScore += msg.length;
-            socket.emit("score", { username, myScore });
+
         } else {
             otherPlayersArr.push(user.username);
         }
