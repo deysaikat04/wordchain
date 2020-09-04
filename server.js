@@ -80,7 +80,7 @@ io.on('connection', (socket) => {
 
 
 
-    socket.on("startTheGame", ({ room, gameTime }) => {
+    socket.on("startTheGame", ({ room, gameTime, letter }) => {
         totalTime = gameTime;
 
         let userArr = [];
@@ -90,6 +90,7 @@ io.on('connection', (socket) => {
             userArr[0].turn = true;
         }
 
+        io.to(room).emit("letterToBeginWith", letter);
         io.to(room).emit("nextUser", userArr[0]);
     });
 
@@ -125,7 +126,7 @@ io.on('connection', (socket) => {
 
     //runs when client disconnects
     socket.on('disconnect', () => {
-        const user = userLeave(socket.id); 
+        const user = userLeave(socket.id);
 
         if (user) {
             io

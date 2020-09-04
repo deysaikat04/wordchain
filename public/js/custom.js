@@ -25,6 +25,8 @@ var typing = false;
 var typingTimeout = undefined;
 var typingUser;
 
+var startingLetter;
+
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const userList = document.getElementById('side-menu');
@@ -35,6 +37,11 @@ var userCount = 0;
 const { username, room, token, gameTime } = Qs.parse(location.search, {
     ignoreQueryPrefix: true
 });
+
+function generateRandomLetter() {
+    let i = Math.floor((Math.random() * 25));
+    return alphabets[i];
+}
 
 // Set the start button who creates the room
 function setStart() {
@@ -61,7 +68,8 @@ function play() {
         document.getElementById("startBtn").removeAttribute("data-target");
         document.getElementById("startBtn").classList.remove("modal-trigger");
 
-        socket.emit("startTheGame", { room, gameTime });
+        let letter = generateRandomLetter();
+        socket.emit("startTheGame", { room, gameTime, letter });
         socket.emit("gameTimeSpan", room);
     } else {
 
@@ -69,6 +77,24 @@ function play() {
         document.getElementById("startBtn").classList.add("modal-trigger");
     }
 }
+
+//get random letter to display all players
+socket.on('letterToBeginWith', letter => {
+    startingLetter = letter;
+
+    document.querySelector('.chat-messages').innerHTML = "";
+
+    const div = document.createElement('div');
+
+    div.classList.add('startingLetter-msg');
+    div.innerHTML =
+        `        
+        <p>Let's begin with <span class="letter">'${startingLetter}'</span></p> 
+    `;
+    document.querySelector('.chat-messages').appendChild(div);
+    var seperator = document.createElement('br');
+    // document.querySelector('.chat-messages').appendChild(seperator);
+})
 
 function calculateGrid() {
     var grid = 0;
@@ -139,19 +165,15 @@ socket.on('message', message => {
 socket.on('botMessage', message => {
     currUser = message.username;
 
-    let i = Math.floor((Math.random() * 25));
-
     const div = document.createElement('div');
-
-    div.classList.add('timeout-msg');
+    div.classList.add('bot-msg');
     div.innerHTML =
         `        
         <p>${message.text}</p> 
     `;
-
     document.querySelector('.chat-messages').appendChild(div);
     var seperator = document.createElement('br');
-    document.querySelector('.chat-messages').appendChild(seperator);
+    // document.querySelector('.chat-messages').appendChild(seperator);
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
@@ -161,7 +183,8 @@ socket.on('botMessage', message => {
 //first letter of words
 socket.on('msgLetter', data => {
     if (data.username !== username) {
-        document.getElementById('msg').placeholder = `Start with: ${data.msg}`;
+        startingLetter = data.msg;
+        document.getElementById('msg').placeholder = `Start with: ${startingLetter}`;
         document.getElementById('msg').focus();
     }
 });
@@ -224,11 +247,6 @@ socket.on('roomUsers', ({ room, users }) => {
       `;
 });
 
-// function fetchWord(msg) {
-//     fetch(`https://api.datamuse.com/words?rel_gen=${msg}`)
-//         .then(response => response.json())
-//         .then(data => console.log(data));
-// }
 
 // chat form submit
 chatForm.addEventListener('submit', (e) => {
@@ -288,7 +306,6 @@ socket.on("nextUser", data => {
 })
 
 
-
 //output message to DOM
 function outputMessage(message) {
     classNames = ['message-sender', 'message-sender-two', 'message-sender-three'];
@@ -346,12 +363,17 @@ function outputMessage(message) {
 
 //check word form list if it's already used
 function checkWord(msg) {
-    // https://api.datamuse.com/words?rel_gen=kkiss
-    let regex = /\s/;
+    // https://api.datamuse.com/words?rel_gen=kkiss    
+
+    let regex = /^[a-zA-z]+$/;
     let found = binarySearch(wordArr.sort(), msg, 0, wordArr.length);
 
     if (user_turn) {
-        if (found || msg.match(regex)) {
+        if (msg[0].toUpperCase() !== startingLetter.toUpperCase()) {
+            document.getElementById('msg').style.border = '1px solid #f44336';
+            document.getElementById('sendBtn').disabled = true;
+        }
+        else if (found || !msg.match(regex)) {
             document.getElementById('msg').style.border = '1px solid #f44336';
             document.getElementById('sendBtn').disabled = true;
         } else {
@@ -448,7 +470,7 @@ function binarySearch(arr, element, start, end) {
 
 function createScoreBoard(i, name, score) {
     let grid = calculateGrid();
-    
+
     if (document.getElementById('scoreboard').childNodes.length <= userArr.length) {
 
         const div = document.createElement('div');
