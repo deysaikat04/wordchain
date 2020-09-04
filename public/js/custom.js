@@ -14,6 +14,7 @@ var MAX_TIMEOUT = 3;
 var user_turn = false;
 var userArr = [];
 var noOfUsers;
+var myIndex = -1;
 
 var timeoutCount = {};
 var myScore = 0;
@@ -69,6 +70,25 @@ function play() {
     }
 }
 
+function calculateGrid() {
+    var grid = 0;
+    switch (noOfUsers) {
+        case 2: {
+            grid = 6;
+            break;
+        }
+        case 3: {
+            grid = 4;
+            break;
+        }
+        default: {
+            grid = 3;
+            break;
+        }
+    }
+    return grid;
+}
+
 socket.on("countdown", data => {
 
     document.getElementById("countdown").innerText = data;
@@ -80,12 +100,14 @@ socket.on("countdown", data => {
         const instance = M.Modal.init(elem, { dismissible: false });
         instance.open();
 
+        let grid = calculateGrid();
+
         userArr.map((user, index) => {
             const div = document.createElement('div');
 
             div.innerHTML =
                 `
-                <div class="col s6" >
+                <div class="col s${grid}" >
                     <p>${user.username}</p>
                     <span>${user.score}</span>
                 </div>
@@ -168,6 +190,7 @@ socket.on('roomUsers', ({ room, users }) => {
         // document.getElementById(`player${index + 1}-name`).innerText = user.username;
         if (user.username === username) {
             user.turn = true;
+            myIndex = index;
         }
         let name = user.username;
         timeoutCount[name] = 0;
@@ -219,7 +242,7 @@ chatForm.addEventListener('submit', (e) => {
         document.getElementById('sendBtn').disabled = true;
 
         msg = e.target.elements.msg.value;
-        // fetchWord(msg);
+
         //Emit a message to server
         socket.emit('chatMessage', msg);
 
@@ -227,6 +250,7 @@ chatForm.addEventListener('submit', (e) => {
 
         e.target.elements.msg.value = '';
         e.target.elements.msg.focus();
+        document.getElementById('msg').placeholder = "";
         socket.emit("nextTurn", nextUser);
 
         user_turn = false;
@@ -267,6 +291,19 @@ socket.on("nextUser", data => {
 
 //output message to DOM
 function outputMessage(message) {
+    classNames = ['message-sender', 'message-sender-two', 'message-sender-three'];
+    chatColor = '';
+    otherPlayersArr = [];
+
+    userArr.map((user, index) => {
+        if (index == myIndex) {
+            chatColor = 'message';
+            //send score  
+            socket.emit("score", { username, myScore });
+        } else {
+            otherPlayersArr.push(user.username);
+        }
+    })
 
     const div = document.createElement('div');
     if (message.username === username) {
@@ -281,13 +318,15 @@ function outputMessage(message) {
                 </p>
             </div>
         `;
-
-        //send score  
-        socket.emit("score", { username, myScore });
     }
     else {
-        // startCount();
-        div.classList.add('message-sender');
+
+        otherPlayersArr.map((user, index) => {
+
+            if (user == message.username) {
+                div.classList.add(classNames[index]);
+            }
+        })
         div.innerHTML =
             `
             <div>              
@@ -310,8 +349,6 @@ function checkWord(msg) {
     // https://api.datamuse.com/words?rel_gen=kkiss
     let regex = /\s/;
     let found = binarySearch(wordArr.sort(), msg, 0, wordArr.length);
-
-
 
     if (user_turn) {
         if (found || msg.match(regex)) {
@@ -410,21 +447,8 @@ function binarySearch(arr, element, start, end) {
 
 
 function createScoreBoard(i, name, score) {
-    var grid = 0;
-    switch (noOfUsers) {
-        case 2: {
-            grid = 6;
-            break;
-        }
-        case 3: {
-            grid = 4;
-            break;
-        }
-        default: {
-            grid = 3;
-            break;
-        }
-    }
+    let grid = calculateGrid();
+    
     if (document.getElementById('scoreboard').childNodes.length <= userArr.length) {
 
         const div = document.createElement('div');
