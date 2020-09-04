@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
         setTimeout(user.id, myTimeout);
         let userArr = getScore(user.room);
 
-        io.to(user.room).emit('updatedScores', userArr);
+        io.to(user.room).emit('updatedTimeout', userArr);
         io.to(user.room).emit('timeoutRes', ({ username, msg: 'Timeout!!' }));
     });
 

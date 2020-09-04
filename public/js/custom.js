@@ -92,10 +92,9 @@ socket.on('letterToBeginWith', letter => {
         <p>Let's begin with <span class="letter">'${startingLetter}'</span></p> 
     `;
     document.querySelector('.chat-messages').appendChild(div);
-    var seperator = document.createElement('br');
-    // document.querySelector('.chat-messages').appendChild(seperator);
 })
 
+//calculate dynamic grid per user
 function calculateGrid() {
     var grid = 0;
     switch (noOfUsers) {
@@ -115,32 +114,37 @@ function calculateGrid() {
     return grid;
 }
 
+function stopTheGame() {
+    stopCount();
+    document.getElementById('sendBtn').disabled = true;
+
+    const elem = document.getElementById('gameOver');
+    const instance = M.Modal.init(elem, { dismissible: false });
+    instance.open();
+
+    let grid = calculateGrid();
+
+    userArr.map((user, index) => {
+        const div = document.createElement('div');
+
+        div.innerHTML =
+            `
+            <div class="col s${grid}" >
+                <p>${user.username}</p>
+                <span>${user.score}</span>
+            </div>
+        `;
+
+        document.querySelector('.scores').appendChild(div);
+    });
+}
+
+//countdown 
 socket.on("countdown", data => {
 
     document.getElementById("countdown").innerText = data;
     if (data == '0:00') {
-        stopCount();
-        document.getElementById('sendBtn').disabled = true;
-
-        const elem = document.getElementById('gameOver');
-        const instance = M.Modal.init(elem, { dismissible: false });
-        instance.open();
-
-        let grid = calculateGrid();
-
-        userArr.map((user, index) => {
-            const div = document.createElement('div');
-
-            div.innerHTML =
-                `
-                <div class="col s${grid}" >
-                    <p>${user.username}</p>
-                    <span>${user.score}</span>
-                </div>
-            `;
-
-            document.querySelector('.scores').appendChild(div);
-        });
+        stopTheGame();
     }
 });
 
@@ -158,8 +162,6 @@ socket.on('message', message => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
 });
-
-
 
 // message from bot 
 socket.on('botMessage', message => {
@@ -193,7 +195,7 @@ socket.on('updatedScores', users => {
     userArr = users;
     users.map((user, index) => {
         document.getElementById(`player${index + 1}-score`).innerText = user.score;
-        // createScoreBoard(index, user.name, user.score);
+
     });
 });
 
@@ -209,8 +211,6 @@ socket.on('roomUsers', ({ room, users }) => {
         if (noOfUsers > 1) {
             createScoreBoard(index, user.username, user.score);
         }
-
-        // document.getElementById(`player${index + 1}-name`).innerText = user.username;
         if (user.username === username) {
             user.turn = true;
             myIndex = index;
@@ -221,7 +221,6 @@ socket.on('roomUsers', ({ room, users }) => {
 
     socket.emit("turn", userArr);
 
-    // callTimer(users);
     userCount = users.length;
 
     userList.innerHTML = `
@@ -275,6 +274,8 @@ chatForm.addEventListener('submit', (e) => {
 
 
     }
+    //send score  
+    socket.emit("score", { myScore });
 
 });
 
@@ -315,9 +316,7 @@ function outputMessage(message) {
     userArr.map((user, index) => {
         if (index == myIndex) {
             chatColor = 'message';
-            //send score  
-            myScore += msg.length;
-            socket.emit("score", { username, myScore });
+
         } else {
             otherPlayersArr.push(user.username);
         }
@@ -405,9 +404,10 @@ function timedCount() {
     if (count < 0) {
 
         document.getElementById('msg').placeholder = "SORRY!! TIME OUT!!";
-        document.getElementById('msg').focus();
+        document.getElementById('msg').style.background = '#cccccc';
 
         myTimeout += 1;
+
         socket.emit("timeout", { username, myTimeout });
 
         document.getElementById('msg').value = '';
@@ -415,6 +415,8 @@ function timedCount() {
 
         user_turn = false;
         socket.emit("nextTurn", nextUser);
+
+        msg ? socket.emit('startLetter', msg.slice(-1).toUpperCase()) : null;
 
         stopCount();
     }
