@@ -71,7 +71,7 @@ function getScore(room) {
 function setTimeout(id, timeout) {
     users.map((user) => {
         if (user.id === id) {
-            user.timeout += timeout;
+            user.timeout = timeout;
             user.score -= TIMEOUT_SCORE_DEDUCT;
         }
     });
